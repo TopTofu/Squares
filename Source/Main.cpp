@@ -26,7 +26,7 @@ int main() {
 	Mesh quad = getQuadMesh({ 0, 0.01, 0 }, { 0.5, 0, 0 }, { 0, 0, 0.5 }, glm::vec4(0.5f, 0.5f, 1.0f, 1.0f));
 	quad.shader = shader;
 	
-	World w = initWorld(20, 0.5f, shader);
+	initWorld(20, 0.5f, shader);
 
 	float delta = 0.0f;
 	double currentTime = glfwGetTime();
@@ -57,7 +57,7 @@ int main() {
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
 			glm::vec3 inter = getMousePickIntersection(window, camera);
 			if (inter != glm::vec3(0.0f, 0.0f, 0.0f)) {
-				Cell* c = cellAtWorldCoords(w, inter);
+				Cell* c = cellAtWorldCoords(world, inter);
 				if (c) {
 					quad.translation = c->worldPosition;
 				}
@@ -65,7 +65,7 @@ int main() {
 		}
 
 		renderMesh(quad, camera);
-		renderWorld(w, camera);
+		renderWorld(camera);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

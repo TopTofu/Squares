@@ -2,8 +2,9 @@
 #include <algorithm>
 #include <Engine\Render.h>
 
-World initWorld(int gridSize, float cellSize, GLuint shader) {
-	World world;
+World world;
+
+void initWorld(int gridSize, float cellSize, GLuint shader) {
 	for (int y = 0; y < gridSize; y++) {
 		for (int x = 0; x < gridSize; x++) {
 			Cell c;
@@ -19,8 +20,6 @@ World initWorld(int gridSize, float cellSize, GLuint shader) {
 
 	world.mesh = getQuadMesh({ 0, 0, 0 }, { cellSize * gridSize, 0, 0 }, { 0, 0, cellSize * gridSize }, { 0.09f, 0.34f, 0.23f, 1.0f });
 	world.mesh.shader = shader;
-
-	return world;
 }
 
 
@@ -37,6 +36,6 @@ Cell* cellAtWorldCoords(World& world, glm::vec3 coords) {
 }
 
 
-void renderWorld(World& world, Camera& camera) {
+void renderWorld(Camera& camera) {
 	renderMesh(world.mesh, camera);
 }

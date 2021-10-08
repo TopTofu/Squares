@@ -22,9 +22,11 @@ struct World {
 	Mesh mesh;
 };
 
+extern World world;
 
-World initWorld(int gridSize, float cellSize, GLuint shader);
+
+void initWorld(int gridSize, float cellSize, GLuint shader);
 
 Cell* cellAtWorldCoords(World& world, glm::vec3 coords);
 
-void renderWorld(World& world, Camera& camera);
+void renderWorld(Camera& camera);
