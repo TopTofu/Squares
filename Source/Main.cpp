@@ -6,6 +6,7 @@
 #include <Util/Common.h>
 #include <Engine/Controls.h>
 #include <Game/World.h>
+#include <Game/Interface.h>
 
 int main() {
 
@@ -20,13 +21,8 @@ int main() {
 	cameraRotateY(camera, 135);
 	cameraRotateX(camera, 40);
 
-	Mesh plane = getQuadMesh({ 0, 0, 0 }, { 20, 0, 0 }, { 0, 0, 20 }, glm::vec4(0.0f, 0.40f, 0.27f, 1.0f));
-	plane.shader = shader;
-
-	Mesh quad = getQuadMesh({ 0, 0.01, 0 }, { 0.5, 0, 0 }, { 0, 0, 0.5 }, glm::vec4(0.5f, 0.5f, 1.0f, 1.0f));
-	quad.shader = shader;
-	
 	initWorld(20, 0.5f, shader);
+	initInterface(shader);
 
 	float delta = 0.0f;
 	double currentTime = glfwGetTime();
@@ -53,19 +49,20 @@ int main() {
 		}
 
 		handleCameraMovement(window, camera, delta);
+		handleInterfaceInput(window, camera);
 
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-			glm::vec3 inter = getMousePickIntersection(window, camera);
-			if (inter != glm::vec3(0.0f, 0.0f, 0.0f)) {
-				Cell* c = cellAtWorldCoords(world, inter);
-				if (c) {
-					quad.translation = c->worldPosition;
-				}
-			}
-		}
+		//if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+		//	glm::vec3 inter = getMousePickIntersection(window, camera);
+		//	if (inter != glm::vec3(0.0f, 0.0f, 0.0f)) {
+		//		Cell* c = cellAtWorldCoords(world, inter);
+		//		if (c) {
+		//			interface.cellPicker.translation = c->worldPosition;
+		//		}
+		//	}
+		//}
 
-		renderMesh(quad, camera);
 		renderWorld(camera);
+		renderInterface(camera);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

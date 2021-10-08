@@ -4,6 +4,7 @@
 
 #include <Engine/Camera.h>
 #include <Engine/Camera.h>
+#include <Game/Interface.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtx/intersect.hpp>
@@ -12,8 +13,5 @@
 
 
 
-
-glm::vec3 getMousePickIntersection(GLFWwindow* window, Camera& camera);
-glm::vec2 getNormalizedDeviceCoords(float mouseX, float mouseY);
 void handleCameraMovement(GLFWwindow* window, Camera& camera, float delta);
-
+void handleInterfaceInput(GLFWwindow* window, Camera& camera);

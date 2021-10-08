@@ -1,44 +1,5 @@
 #include <Engine/Controls.h>
 
-glm::vec3 getMousePickIntersection(GLFWwindow* window, Camera& camera) {
-	double mouseX, mouseY;
-
-	glfwGetCursorPos(window, &mouseX, &mouseY);
-
-	glm::vec2 normalized = getNormalizedDeviceCoords(mouseX, mouseY);
-
-	glm::vec4 clip = glm::vec4(normalized, -1.0f, 1.0f);
-
-	glm::mat4 invProj = glm::inverse(getProjectionMatrix(WINDOW_WIDTH, WINDOW_HEIGHT));
-
-	glm::vec4 temp = invProj * clip;
-	glm::vec4 eyeCoords = glm::vec4(temp.x, temp.y, -1.0f, 0.0f);
-
-	glm::mat4 invView = glm::inverse(getViewMatrix(camera));
-	temp = invView * eyeCoords;
-	glm::vec3 ray = glm::normalize(glm::vec3(temp.x, temp.y, temp.z));
-
-	std::cout << "";
-
-	glm::vec3 origin = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 planeNormal = glm::vec3(0.0f, 1.0f, 0.0f);
-	float distance;
-
-	if (!glm::intersectRayPlane(camera.position, ray, origin, planeNormal, distance)) {
-		return glm::vec3(0.0f, 0.0f, 0.0f);
-	}
-
-	return camera.position + distance * ray;
-}
-
-
-glm::vec2 getNormalizedDeviceCoords(float mouseX, float mouseY) {
-	float x = mouseX / WINDOW_WIDTH * 2.0f - 1.0f;
-	float y = mouseY / WINDOW_HEIGHT * -2.0f + 1.0f;
-
-	return glm::vec2(x, y);
-}
-
 
 void handleCameraMovement(GLFWwindow* window, Camera& camera, float delta) {
 	const float speed = camera.speed * delta;
@@ -87,5 +48,12 @@ void handleCameraMovement(GLFWwindow* window, Camera& camera, float delta) {
 	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		camera.firstClick = true;
+	}
+}
+
+
+void handleInterfaceInput(GLFWwindow* window, Camera& camera) {
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+		updateCellPicker(window, camera);
 	}
 }

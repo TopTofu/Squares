@@ -1,8 +1,12 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <vector>
+
 #include <Engine/Mesh.h>
+#include <Engine/Render.h>
+
+#include <vector>
+#include <algorithm>
 
 struct Cell {
 	glm::vec2 gridPosition;
@@ -20,6 +24,8 @@ struct World {
 	std::vector<Cell> grid;
 
 	Mesh mesh;
+
+	bool initialized = false;
 };
 
 extern World world;
@@ -27,6 +33,6 @@ extern World world;
 
 void initWorld(int gridSize, float cellSize, GLuint shader);
 
-Cell* cellAtWorldCoords(World& world, glm::vec3 coords);
+Cell* cellAtWorldCoords(glm::vec3 coords);
 
 void renderWorld(Camera& camera);

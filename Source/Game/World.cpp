@@ -1,10 +1,13 @@
 #include <Game/World.h>
-#include <algorithm>
-#include <Engine\Render.h>
 
 World world;
 
 void initWorld(int gridSize, float cellSize, GLuint shader) {
+	if (world.initialized) {
+		printf("World Struct has already been initialized!");
+		return;
+	}
+
 	for (int y = 0; y < gridSize; y++) {
 		for (int x = 0; x < gridSize; x++) {
 			Cell c;
@@ -20,10 +23,12 @@ void initWorld(int gridSize, float cellSize, GLuint shader) {
 
 	world.mesh = getQuadMesh({ 0, 0, 0 }, { cellSize * gridSize, 0, 0 }, { 0, 0, cellSize * gridSize }, { 0.09f, 0.34f, 0.23f, 1.0f });
 	world.mesh.shader = shader;
+
+	world.initialized = true;
 }
 
 
-Cell* cellAtWorldCoords(World& world, glm::vec3 coords) {
+Cell* cellAtWorldCoords(glm::vec3 coords) {
 	int gridX = coords.x / world.cellSize;
 	int gridY = coords.z / world.cellSize;
 
