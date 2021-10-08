@@ -16,15 +16,17 @@ int main() {
 	GLuint fragShader = compileShader("E:/Squares/Resources/Shader/default.frag");
 	GLuint shader = createProgram(vertShader, fragShader);
 
-	Camera camera = initCamera(glm::vec3(0.0f, 0.5f, 0.5f), WINDOW_WIDTH, WINDOW_HEIGHT);
+	Camera camera = initCamera(glm::vec3(-1.0f, 4.0f, -1.0f), WINDOW_WIDTH, WINDOW_HEIGHT);
+	cameraRotateY(camera, 135);
+	cameraRotateX(camera, 40);
 
 	Mesh plane = getQuadMesh({ 0, 0, 0 }, { 20, 0, 0 }, { 0, 0, 20 }, glm::vec4(0.0f, 0.40f, 0.27f, 1.0f));
 	plane.shader = shader;
 
-	Mesh quad = getQuadMesh({ 0, 0.1, 0 }, { 0.5, 0, 0 }, { 0, 0, 0.5 }, glm::vec4(0.5f, 0.5f, 1.0f, 1.0f));
+	Mesh quad = getQuadMesh({ 0, 0.01, 0 }, { 0.5, 0, 0 }, { 0, 0, 0.5 }, glm::vec4(0.5f, 0.5f, 1.0f, 1.0f));
 	quad.shader = shader;
 	
-	World w = initWorld(10, 0.5f);
+	World w = initWorld(20, 0.5f, shader);
 
 	float delta = 0.0f;
 	double currentTime = glfwGetTime();
@@ -58,15 +60,12 @@ int main() {
 				Cell* c = cellAtWorldCoords(w, inter);
 				if (c) {
 					quad.translation = c->worldPosition;
-					//printf("InterX: %f InterZ: %f | cellX: %f cellZ: %f | quadX: %f quadZ: %f\n", inter.x, inter.z, c->worldPosition.x, c->worldPosition.z, quad.translation.x, quad.translation.z);
 				}
-
-
 			}
 		}
 
-		renderMesh(plane, camera);
 		renderMesh(quad, camera);
+		renderWorld(w, camera);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
