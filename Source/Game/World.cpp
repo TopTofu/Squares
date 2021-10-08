@@ -1,4 +1,5 @@
 #include <Game/World.h>
+#include <algorithm>
 
 World initWorld(int gridSize, float cellSize) {
 	World world;
@@ -6,7 +7,7 @@ World initWorld(int gridSize, float cellSize) {
 		for (int x = 0; x < gridSize; x++) {
 			Cell c;
 			c.gridPosition = { x, y };
-			c.worldPosition = { x * cellSize, y * cellSize, 0 };
+			c.worldPosition = { y * cellSize, 0, x * cellSize }; // this works but i dont know why
 
 			world.grid.push_back(c);
 		}
@@ -19,10 +20,14 @@ World initWorld(int gridSize, float cellSize) {
 }
 
 
-Cell& cellAtWorldCoords(World& world, glm::vec3 coords) {
-	double gridX = coords.x / world.cellSize;
-	double gridY = coords.y / world.cellSize;
+Cell* cellAtWorldCoords(World& world, glm::vec3 coords) {
+	int gridX = coords.x / world.cellSize;
+	int gridY = coords.z / world.cellSize;
 
-	Cell& c = world.grid[gridY + world.size * gridX];
+	gridX = std::clamp(gridX, 0, world.size - 1);
+	gridY = std::clamp(gridY, 0, world.size - 1);
+	int index = gridY + world.size * gridX;
+
+	Cell* c = &world.grid[index];
 	return c;
 }

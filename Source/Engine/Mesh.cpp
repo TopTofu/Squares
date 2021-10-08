@@ -1,23 +1,20 @@
 #include <Engine/Mesh.h>
 
 
-Mesh getQuadMesh(float mX, float mY, float mZ, float w, float h, glm::vec4 color, bool buffer) {
+Mesh getQuadMesh(glm::vec3 origin, glm::vec3 s0, glm::vec3 s1, glm::vec4 color, bool buffer) {
 	Mesh mesh;
 
-	float halfW = w / 2.0f;
-	float halfH = h / 2.0f;
-
 	Vertex v0;
-	v0.position = glm::vec3(mX - halfW, mY - halfH, mZ);
+	v0.position = origin;
 	v0.color = color;
 	Vertex v1;
-	v1.position = glm::vec3(mX + halfW, mY - halfH, mZ);
+	v1.position = origin + s0;
 	v1.color = color;
 	Vertex v2;
-	v2.position = glm::vec3(mX + halfW, mY + halfH, mZ);
+	v2.position = origin + s0 + s1;
 	v2.color = color;
 	Vertex v3;
-	v3.position = glm::vec3(mX - halfW, mY + halfH, mZ);
+	v3.position = origin + s1;
 	v3.color = color;
 
 	mesh.vertices.push_back(v0);

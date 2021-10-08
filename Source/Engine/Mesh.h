@@ -31,8 +31,8 @@ struct Mesh {
 };
 
 
-Mesh getQuadMesh(float mX, float mY, float mZ, float w, float h, glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f), bool buffer = true);
-Mesh getCircleMesh(float r, int numSegements, glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f));
+Mesh getQuadMesh(glm::vec3 origin, glm::vec3 s0, glm::vec3 s1, glm::vec4 color = {1, 1, 1, 1}, bool buffer = true);
+Mesh getCircleMesh(float r, int numSegements, glm::vec4 color = { 1, 1, 1, 1 });
 
 void bufferMesh(Mesh& mesh);
 

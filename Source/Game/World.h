@@ -22,5 +22,5 @@ struct World {
 
 World initWorld(int gridSize, float cellSize);
 
-Cell& cellAtWorldCoords(World& world, glm::vec3 coords);
+Cell* cellAtWorldCoords(World& world, glm::vec3 coords);
 
