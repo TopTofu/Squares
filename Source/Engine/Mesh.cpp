@@ -129,7 +129,7 @@ Mesh loadOBJ(std::string filePath, bool buffer = true) {
 	std::string line;
 
 	std::vector<glm::vec3> normals = {};
-	std::vector<glm::vec2> colorCoords = {};
+	std::vector<glm::vec2> texCoords = {};
 	std::vector<glm::vec4> colors = {};
 	std::vector<Material> mats;
 
@@ -186,7 +186,7 @@ Mesh loadOBJ(std::string filePath, bool buffer = true) {
 
 			if (line.size() > 2) w = stof(values[2]);
 
-			colorCoords.push_back({ u, v });
+			texCoords.push_back({ u, v });
 		}
 
 		else if (type == "v") {
@@ -199,8 +199,8 @@ Mesh loadOBJ(std::string filePath, bool buffer = true) {
 			mesh.vertices.push_back(v);
 		}
 
-		else if ("f") {
-			// faces
+		else if (type == "f") {
+			// faces (pos/uv/normal) - indices
 			std::vector<std::string> values = splitAt(line, "/ ");
 
 			if (values.size() == 12) {
@@ -217,19 +217,43 @@ Mesh loadOBJ(std::string filePath, bool buffer = true) {
 				mesh.indices.push_back(i2);
 				mesh.indices.push_back(i3);
 
-				mesh.vertices[i0].color = colors[(int)((colorCoords[stoi(values[1]) - 1].x) * colors.size())];
-				mesh.vertices[i1].color = colors[(int)((colorCoords[stoi(values[4]) - 1].x) * colors.size())];
-				mesh.vertices[i2].color = colors[(int)((colorCoords[stoi(values[7]) - 1].x) * colors.size())];
-				mesh.vertices[i3].color = colors[(int)((colorCoords[stoi(values[10]) - 1].x) * colors.size())];
-
+				mesh.vertices[i0].uv = texCoords[stoi(values[1])];
 				mesh.vertices[i0].normal = normals[stoi(values[2]) - 1];
+
+				mesh.vertices[i1].uv = texCoords[stoi(values[4])];
 				mesh.vertices[i1].normal = normals[stoi(values[5]) - 1];
+
+				mesh.vertices[i2].uv = texCoords[stoi(values[7])];
 				mesh.vertices[i2].normal = normals[stoi(values[8]) - 1];
+
+				mesh.vertices[i3].uv = texCoords[stoi(values[9])];
 				mesh.vertices[i3].normal = normals[stoi(values[11]) - 1];
 			}
+			else if (values.size() == 9) {
+				int i0 = stoi(values[0]) - 1;
+				int i1 = stoi(values[3]) - 1;
+				int i2 = stoi(values[6]) - 1;
+
+				mesh.indices.push_back(i0);
+				mesh.indices.push_back(i1);
+				mesh.indices.push_back(i2);
+
+				mesh.vertices[i0].uv = texCoords[stoi(values[1])];
+				mesh.vertices[i0].normal = normals[stoi(values[2]) - 1];
+
+				mesh.vertices[i1].uv = texCoords[stoi(values[4])];
+				mesh.vertices[i1].normal = normals[stoi(values[5]) - 1];
+
+				mesh.vertices[i2].uv = texCoords[stoi(values[7])];
+				mesh.vertices[i2].normal = normals[stoi(values[8]) - 1];
+			}
+			else {
+				printf("Unsupported number of face values: %i (in file %s)", values.size(), filePath);
+				return mesh;
+			}
 		}
-		
-		else if ("s") {
+
+		else if (type == "s") {
 			// smooth shading
 		}
 
@@ -281,7 +305,7 @@ std::vector<Material> loadMtl(std::string filePath) {
 		else if (type == "Kd") {} // diffuse color
 
 		else if (type == "Ks") {} // specular color
-		
+
 		else if (type == "d") {} // opaqueness
 
 		else if (type == "Ni") {} // optical density (refraction index)
