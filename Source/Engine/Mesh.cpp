@@ -115,3 +115,181 @@ void rotateMeshBy(Mesh& mesh, glm::vec3 axis, float degrees) {
 	mesh.rotation = glm::rotate(mesh.rotation, glm::radians(degrees), axis);
 }
 
+Mesh loadOBJ(std::string filePath, bool buffer = true) {
+	Mesh mesh;
+
+	std::fstream file;
+	file.open(filePath, std::ios::in);
+
+	if (!file.is_open()) {
+		printf("Failed to load model file [%s]\n", filePath.c_str());
+		return mesh;
+	}
+
+	std::string line;
+
+	std::vector<glm::vec3> normals = {};
+	std::vector<glm::vec2> colorCoords = {};
+	std::vector<glm::vec4> colors = {};
+	std::vector<Material> mats;
+
+	while (std::getline(file, line)) {
+		if (line.empty()) {
+			continue;
+		}
+
+		int spaceIndex = line.find(' ');
+		if (spaceIndex == std::string::npos) continue;
+
+		std::string type = line.substr(0, spaceIndex);
+		line.erase(0, spaceIndex + 1);
+		if (line.empty()) continue;
+		if (type == "#") continue;
+
+		if (type == "mtllib") {
+			// material file
+			std::string matPath = filePath.substr(0, filePath.rfind('/') + 1) + line;
+			mats = loadMtl(matPath);
+		}
+
+		else if (type == "usemtl") {
+			// material name
+
+		}
+
+		else if (type == "o") {
+			// object name
+		}
+
+		else if (type == "g") {
+			// group name
+		}
+
+		else if (type == "vn") {
+			// normal
+			std::vector<std::string> values = splitAt(line, " ");
+
+			normals.push_back(glm::vec3(stof(values[0]), stof(values[1]), stof(values[2])));
+		}
+
+		else if (type == "vt") {
+			// uv coords
+			float u = 0.0f;
+			float v = 0.0f;
+			float w = 0.0f;
+
+			std::vector<std::string> values = splitAt(line, " ");
+
+			u = stof(values[0]);
+
+			if (line.size() > 1) v = stof(values[1]);
+
+			if (line.size() > 2) w = stof(values[2]);
+
+			colorCoords.push_back({ u, v });
+		}
+
+		else if (type == "v") {
+			// vertex
+			std::vector<std::string> values = splitAt(line, " ");
+
+			Vertex v;
+			v.position = { stof(values[0]), stof(values[1]), stof(values[2]) };
+
+			mesh.vertices.push_back(v);
+		}
+
+		else if ("f") {
+			// faces
+			std::vector<std::string> values = splitAt(line, "/ ");
+
+			if (values.size() == 12) {
+				int i0 = stoi(values[0]) - 1;
+				int i1 = stoi(values[3]) - 1;
+				int i2 = stoi(values[6]) - 1;
+				int i3 = stoi(values[9]) - 1;
+
+				mesh.indices.push_back(i0);
+				mesh.indices.push_back(i1);
+				mesh.indices.push_back(i2);
+
+				mesh.indices.push_back(i0);
+				mesh.indices.push_back(i2);
+				mesh.indices.push_back(i3);
+
+				mesh.vertices[i0].color = colors[(int)((colorCoords[stoi(values[1]) - 1].x) * colors.size())];
+				mesh.vertices[i1].color = colors[(int)((colorCoords[stoi(values[4]) - 1].x) * colors.size())];
+				mesh.vertices[i2].color = colors[(int)((colorCoords[stoi(values[7]) - 1].x) * colors.size())];
+				mesh.vertices[i3].color = colors[(int)((colorCoords[stoi(values[10]) - 1].x) * colors.size())];
+
+				mesh.vertices[i0].normal = normals[stoi(values[2]) - 1];
+				mesh.vertices[i1].normal = normals[stoi(values[5]) - 1];
+				mesh.vertices[i2].normal = normals[stoi(values[8]) - 1];
+				mesh.vertices[i3].normal = normals[stoi(values[11]) - 1];
+			}
+		}
+		
+		else if ("s") {
+			// smooth shading
+		}
+
+		else {
+			printf("In file [%s] found unparsed line: %s\n", filePath, type + " " + line);
+		}
+	}
+
+	file.close();
+
+	mesh.primitive = GL_TRIANGLES;
+
+	if (buffer) bufferMesh(mesh);
+
+	return mesh;
+}
+
+
+std::vector<Material> loadMtl(std::string filePath) {
+	std::fstream file;
+	file.open(filePath, std::ios::in);
+	std::vector<Material> mats = {};
+
+	if (!file.is_open()) {
+		printf("Failed to open material file %s.\n", filePath.c_str());
+		return mats;
+	}
+
+	std::string line;
+
+	while (std::getline(file, line)) {
+		if (line.empty()) continue;
+
+		int spaceIndex = line.find(' ');
+		if (spaceIndex == std::string::npos) continue;
+
+		std::string type = line.substr(0, spaceIndex);
+		line.erase(0, spaceIndex + 1);
+		if (line.empty()) continue;
+
+		if (type == "newmtl") {} // starts new material, gives name
+
+		else if (type == "#") {} // comment
+
+		else if (type == "illum") {} // illumination mode
+
+		else if (type == "Ka") {} // ambient color
+
+		else if (type == "Kd") {} // diffuse color
+
+		else if (type == "Ks") {} // specular color
+		
+		else if (type == "d") {} // opaqueness
+
+		else if (type == "Ni") {} // optical density (refraction index)
+
+		else if (type == "Ns") {} // specular exponent (range 0 - 1000)
+
+		else printf("In file [%s] found unparsed line: %s\n", filePath, type + " " + line);
+	}
+
+	return mats;
+}
