@@ -82,3 +82,4 @@ void scaleMeshBy(Mesh& mesh, glm::vec3 scale);
 void rotateMeshBy(Mesh& mesh, glm::vec3 axis, float degrees);
 
 Mesh loadOBJ(std::string filePath, bool buffer = true);
+std::vector<Material> loadMtl(std::string filePath);

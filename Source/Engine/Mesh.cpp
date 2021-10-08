@@ -115,7 +115,7 @@ void rotateMeshBy(Mesh& mesh, glm::vec3 axis, float degrees) {
 	mesh.rotation = glm::rotate(mesh.rotation, glm::radians(degrees), axis);
 }
 
-Mesh loadOBJ(std::string filePath, bool buffer = true) {
+Mesh loadOBJ(std::string filePath, bool buffer) {
 	Mesh mesh;
 
 	std::fstream file;
