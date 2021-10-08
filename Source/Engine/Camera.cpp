@@ -24,3 +24,17 @@ glm::mat4 getProjectionMatrix(int width, int height) {
 glm::mat4 getCameraMatrix(Camera& camera) {
 	return getProjectionMatrix(WINDOW_WIDTH, WINDOW_HEIGHT) * getViewMatrix(camera);
 }
+
+void cameraRotateX(Camera& camera, float degrees, bool limit) {
+	glm::vec3 orientation = glm::rotate(camera.orientation, glm::radians(-degrees), glm::normalize(glm::cross(camera.orientation, camera.up)));
+	if (!limit) 
+		camera.orientation = orientation;
+
+	else if (glm::angle(orientation, camera.up) >= 0.1f && glm::angle(orientation, -camera.up) >= 0.1f) {
+		camera.orientation = orientation;
+	}
+}
+
+void cameraRotateY(Camera& camera, float degrees) {
+	camera.orientation = glm::rotate(camera.orientation, glm::radians(-degrees), camera.up);
+}

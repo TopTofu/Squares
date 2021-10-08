@@ -79,13 +79,9 @@ void handleCameraMovement(GLFWwindow* window, Camera& camera, float delta) {
 		float rotX = sensitivity * (float)(mouseY - (camera.height / 2)) / camera.height;
 		float rotY = sensitivity * (float)(mouseX - (camera.width / 2)) / camera.width;
 
-		glm::vec3 newOrientation = glm::rotate(camera.orientation, glm::radians(-rotX), glm::normalize(glm::cross(camera.orientation, camera.up)));
-
-		if (glm::angle(newOrientation, camera.up) >= 0.01f && glm::angle(newOrientation, -camera.up) >= 0.01f) {
-			camera.orientation = newOrientation;
-		}
-
-		camera.orientation = glm::rotate(camera.orientation, glm::radians(-rotY), camera.up);
+		cameraRotateX(camera, rotX);
+		cameraRotateY(camera, rotY);
+		
 		glfwSetCursorPos(window, (camera.width / 2), (camera.height / 2));
 	}
 	else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE) {

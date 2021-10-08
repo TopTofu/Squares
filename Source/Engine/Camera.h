@@ -1,7 +1,9 @@
 #pragma once
 
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/intersect.hpp>
+#include <glm/gtx/vector_angle.hpp>
 
 #include <Util/Common.h>
 
@@ -20,7 +22,10 @@ struct Camera {
 };
 
 Camera initCamera(glm::vec3 position, int width, int height);
+
 glm::mat4 getViewMatrix(Camera& camera);
 glm::mat4 getProjectionMatrix(int width, int height);
 glm::mat4 getCameraMatrix(Camera& camera);
 
+void cameraRotateX(Camera& camera, float degrees, bool limit = true);
+void cameraRotateY(Camera& camera, float degrees);
