@@ -1,4 +1,5 @@
 #include <Engine/Render.h>
+#include <Engine\Light.h>
 
 void initOpenGL(GLFWwindow* window, int width, int height) {
 	glfwMakeContextCurrent(window);
@@ -29,6 +30,7 @@ void renderMesh(Mesh& mesh, Camera& camera) {
 
 	glm::mat4 cameraMatrix = getCameraMatrix(camera);
 	glUniformMatrix4fv(glGetUniformLocation(mesh.shader, "camera"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+	glUniform3fv(glGetUniformLocation(mesh.shader, "viewPos"), 1, glm::value_ptr(camera.position));
 
 	glm::mat4 transl = glm::mat4(1.0f);
 	glm::mat4 rot = glm::mat4(1.0f);
@@ -38,10 +40,13 @@ void renderMesh(Mesh& mesh, Camera& camera) {
 	rot = glm::mat4_cast(mesh.rotation);
 	sca = glm::scale(sca, mesh.scale);
 
-	// this is probably slower than multiplying in shader
 	glm::mat4 transform = transl * rot * sca;
-
 	glUniformMatrix4fv(glGetUniformLocation(mesh.shader, "transform"), 1, GL_FALSE, glm::value_ptr(transform));
+
+	glUniform3fv(glGetUniformLocation(mesh.shader, "material.ambient"), 1, glm::value_ptr(mesh.material.ambient));
+	glUniform3fv(glGetUniformLocation(mesh.shader, "material.diffuse"), 1, glm::value_ptr(mesh.material.diffuse));
+	glUniform3fv(glGetUniformLocation(mesh.shader, "material.specular"), 1, glm::value_ptr(mesh.material.specular));
+	glUniform1f(glGetUniformLocation(mesh.shader, "material.shininess"), mesh.material.specularExponent);
 
 	glDrawElements(mesh.primitive, mesh.indices.size(), GL_UNSIGNED_INT, 0);
 

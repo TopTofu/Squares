@@ -3,8 +3,9 @@
 #include <Engine/Window.h>
 #include <Engine/Render.h>
 #include <Engine/Shader.h>
-#include <Util/Common.h>
+#include <Engine/Light.h>
 #include <Engine/Controls.h>
+#include <Util/Common.h>
 #include <Game/World.h>
 #include <Game/Interface.h>
 
@@ -16,6 +17,10 @@ int main() {
 	GLuint vertShader = compileShader("E:/Squares/Resources/Shader/default.vert");
 	GLuint fragShader = compileShader("E:/Squares/Resources/Shader/default.frag");
 	GLuint shader = createProgram(vertShader, fragShader);
+
+	GLuint matVert = compileShader("E:/Squares/Resources/Shader/material.vert");
+	GLuint matFrag = compileShader("E:/Squares/Resources/Shader/material.frag");
+	GLuint matShader = createProgram(matVert, matFrag);
 
 	Camera camera = initCamera(glm::vec3(-1.0f, 4.0f, -1.0f), WINDOW_WIDTH, WINDOW_HEIGHT);
 	cameraRotateY(camera, 135);
@@ -33,8 +38,10 @@ int main() {
 
 	Model m = loadOBJ("E:/Squares/Resources/Models/treeTriangle.obj");
 	for (Mesh& mesh : m.meshes) {
-		mesh.shader = shader;
+		mesh.shader = matShader;
 	}
+
+	Light light = initLight({0.0f, 4.0f, 0.0f});
 
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0 / 255.0f, 30 / 255.0f, 50 / 255.0f, 1.0f);
@@ -52,6 +59,9 @@ int main() {
 			prevFrameCount = frameCount;
 			timeAccumulator = 0.0f;
 		}
+
+		applyLightToShader(light, matShader);
+		showLight(light, camera, shader);
 
 		handleCameraMovement(window, camera, delta);
 		handleInterfaceInput(window, camera);

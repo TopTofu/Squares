@@ -59,6 +59,46 @@ Mesh getCircleMesh(float r, int numSegements, glm::vec4 color) {
 	return mesh;
 }
 
+Mesh getQubeMesh(float size, bool buffer) {
+	Mesh m;
+	m.vertices = std::vector<Vertex>{
+		Vertex{ glm::vec3(-0.5, -0.5, -0.5), {0,0}, {1,1,1,1} },
+		Vertex{ glm::vec3(0.5,  -0.5, -0.5), {0,0}, {1,1,1,1} },
+		Vertex{ glm::vec3(0.5,   0.5, -0.5), {0,0}, {1,1,1,1} },
+		Vertex{ glm::vec3(-0.5,  0.5, -0.5), {0,0}, {1,1,1,1} },
+		Vertex{ glm::vec3(-0.5,	-0.5,  0.5), {0,0}, {1,1,1,1} },
+		Vertex{ glm::vec3(0.5,	-0.5,  0.5), {0,0}, {1,1,1,1} },
+		Vertex{ glm::vec3(0.5,   0.5,  0.5), {0,0}, {1,1,1,1} },
+		Vertex{ glm::vec3(-0.5,  0.5,  0.5), {0,0}, {1,1,1,1} },
+	};
+
+	m.indices = std::vector<GLuint>{
+			0, 1, 2,
+			0, 2, 3,
+
+			4, 1, 0,
+			4, 5, 1,
+
+			2, 1, 5,
+			2, 5, 6,
+
+			7, 0, 3,
+			7, 4, 0,
+
+			6, 5, 4,
+			6, 4, 7,
+
+			3, 2, 6,
+			3, 6, 7
+	};
+
+	if (buffer) bufferMesh(m);
+
+	m.scale = { size, size, size };
+
+	return m;
+}
+
 void bufferMesh(Mesh& mesh) {
 	glDeleteVertexArrays(1, &mesh.vao);
 
@@ -85,6 +125,9 @@ void bufferMesh(Mesh& mesh) {
 	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(5 * sizeof(float)));
 	glEnableVertexAttribArray(2); // color
 
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(9 * sizeof(float)));
+	glEnableVertexAttribArray(3);
+
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -93,6 +136,12 @@ void bufferMesh(Mesh& mesh) {
 	glDeleteBuffers(1, &ebo);
 
 	mesh.vao = vao;
+}
+
+void bufferModel(Model& model) {
+	for (Mesh& mesh : model.meshes) {
+		bufferMesh(mesh);
+	}
 }
 
 void translateMeshTo(Mesh& mesh, glm::vec3 destination) {
@@ -261,10 +310,10 @@ Model loadOBJ(std::string filePath, bool buffer) {
 					v.position = positions[posI];
 					v.normal = normals[normI];
 					v.uv = texCoords[uvI];
-					v.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+					v.color = glm::vec4(currentMesh.material.diffuse, 1.0f);
 
 					currentMesh.vertices.push_back(v);
-					
+
 					currentMesh.indices.push_back(vCount);
 					vCount++;
 				}
@@ -283,7 +332,7 @@ Model loadOBJ(std::string filePath, bool buffer) {
 	model.meshes.push_back(currentMesh);
 
 	if (buffer) bufferModel(model);
-	
+
 	file.close();
 
 	return model;
@@ -320,7 +369,7 @@ std::vector<Material> loadMtl(std::string filePath) {
 				mats.push_back(currentMat);
 				currentMat = {};
 			}
-			else first = false; 
+			else first = false;
 
 			currentMat.name = line;
 		}
@@ -368,11 +417,4 @@ std::vector<Material> loadMtl(std::string filePath) {
 	mats.push_back(currentMat);
 
 	return mats;
-}
-
-
-void bufferModel(Model& model) {
-	for (Mesh& mesh : model.meshes) {
-		bufferMesh(mesh);
-	}
 }

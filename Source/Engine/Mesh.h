@@ -81,6 +81,7 @@ struct Model {
 
 Mesh getQuadMesh(glm::vec3 origin, glm::vec3 s0, glm::vec3 s1, glm::vec4 color = { 1, 1, 1, 1 }, bool buffer = true);
 Mesh getCircleMesh(float r, int numSegements, glm::vec4 color = { 1, 1, 1, 1 });
+Mesh getQubeMesh(float size = 1.0f, bool buffer = true);
 
 void bufferMesh(Mesh& mesh);
 void bufferModel(Model& model);
