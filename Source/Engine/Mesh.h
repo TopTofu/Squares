@@ -38,7 +38,7 @@ enum IlluminationMode {
 
 struct Material {
 	std::string name;
-	std::string file;
+	std::string filePath;
 
 	glm::vec3 ambient;
 	glm::vec3 diffuse;
@@ -54,6 +54,8 @@ struct Material {
 
 
 struct Mesh {
+	Material material;
+
 	std::vector<Vertex> vertices;
 	std::vector<GLuint> indices;
 
@@ -68,10 +70,20 @@ struct Mesh {
 };
 
 
+struct Model {
+	std::string name;
+	std::string filePath;
+
+	std::vector<Mesh> meshes;
+	std::vector<Material> materials;
+};
+
+
 Mesh getQuadMesh(glm::vec3 origin, glm::vec3 s0, glm::vec3 s1, glm::vec4 color = { 1, 1, 1, 1 }, bool buffer = true);
 Mesh getCircleMesh(float r, int numSegements, glm::vec4 color = { 1, 1, 1, 1 });
 
 void bufferMesh(Mesh& mesh);
+void bufferModel(Model& model);
 
 void translateMeshTo(Mesh& mesh, glm::vec3 destination);
 void translateMeshBy(Mesh& mesh, glm::vec3 offset);
@@ -81,5 +93,5 @@ void scaleMeshBy(Mesh& mesh, glm::vec3 scale);
 
 void rotateMeshBy(Mesh& mesh, glm::vec3 axis, float degrees);
 
-Mesh loadOBJ(std::string filePath, bool buffer = true);
+Model loadOBJ(std::string filePath, bool buffer = true);
 std::vector<Material> loadMtl(std::string filePath);

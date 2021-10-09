@@ -16,7 +16,7 @@
 void initOpenGL(GLFWwindow* window, int width, int height);
 
 void renderMesh(Mesh& mesh, Camera& camera);
-
+void renderModel(Model& model, Camera& camera);
 
 
 

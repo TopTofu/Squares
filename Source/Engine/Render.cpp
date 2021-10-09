@@ -22,8 +22,6 @@ void initOpenGL(GLFWwindow* window, int width, int height) {
 }
 
 
-
-
 void renderMesh(Mesh& mesh, Camera& camera) {
 	glUseProgram(mesh.shader);
 
@@ -51,5 +49,10 @@ void renderMesh(Mesh& mesh, Camera& camera) {
 }
 
 
+void renderModel(Model& model, Camera& camera) {
+	for (Mesh& mesh : model.meshes) {
+		renderMesh(mesh, camera);
+	}
+}
 
 

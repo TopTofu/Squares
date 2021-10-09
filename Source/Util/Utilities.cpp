@@ -44,7 +44,7 @@ std::vector<std::string> splitAt(std::string s, const char* c) {
 	int size = s.size();
 
 	for (int i = 0; i < size; i++) {
-		int index = s.find_first_of(c);
+		size_t index = s.find_first_of(c);
 
 		if (index == -1) {
 			result.push_back(s);

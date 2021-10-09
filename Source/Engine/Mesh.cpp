@@ -115,50 +115,69 @@ void rotateMeshBy(Mesh& mesh, glm::vec3 axis, float degrees) {
 	mesh.rotation = glm::rotate(mesh.rotation, glm::radians(degrees), axis);
 }
 
-Mesh loadOBJ(std::string filePath, bool buffer) {
-	Mesh mesh;
+Model loadOBJ(std::string filePath, bool buffer) {
+	Model model;
+	model.filePath = filePath;
 
 	std::fstream file;
 	file.open(filePath, std::ios::in);
 
 	if (!file.is_open()) {
 		printf("Failed to load model file [%s]\n", filePath.c_str());
-		return mesh;
+		return model;
 	}
 
 	std::string line;
 
-	std::vector<glm::vec3> normals = {};
-	std::vector<glm::vec2> texCoords = {};
-	std::vector<glm::vec4> colors = {};
-	std::vector<Material> mats;
+	std::vector<glm::vec3> normals;
+	std::vector<glm::vec3> positions;
+	std::vector<glm::vec2> texCoords;
+	std::vector<glm::vec4> colors;
+	std::vector<Material> materials;
+
+	Mesh currentMesh;
+
+	int vCount = 0;
 
 	while (std::getline(file, line)) {
 		if (line.empty()) {
 			continue;
 		}
 
-		int spaceIndex = line.find(' ');
+		size_t spaceIndex = line.find(' ');
 		if (spaceIndex == std::string::npos) continue;
 
 		std::string type = line.substr(0, spaceIndex);
 		line.erase(0, spaceIndex + 1);
+
 		if (line.empty()) continue;
 		if (type == "#") continue;
 
 		if (type == "mtllib") {
 			// material file
 			std::string matPath = filePath.substr(0, filePath.rfind('/') + 1) + line;
-			mats = loadMtl(matPath);
+			materials = loadMtl(matPath);
 		}
 
 		else if (type == "usemtl") {
 			// material name
+			for (Material mat : materials) {
+				if (mat.name == line) {
+					if (currentMesh.vertices.size() > 0) {
+						model.meshes.push_back(currentMesh);
+						currentMesh = {};
+						vCount = 0;
+					}
 
+					currentMesh.material = mat;
+					break;
+				}
+			}
 		}
 
 		else if (type == "o") {
 			// object name
+			model.name = line;
 		}
 
 		else if (type == "g") {
@@ -182,9 +201,9 @@ Mesh loadOBJ(std::string filePath, bool buffer) {
 
 			u = stof(values[0]);
 
-			if (line.size() > 1) v = stof(values[1]);
+			if (values.size() > 1) v = stof(values[1]);
 
-			if (line.size() > 2) w = stof(values[2]);
+			if (values.size() > 2) w = stof(values[2]);
 
 			texCoords.push_back({ u, v });
 		}
@@ -193,63 +212,62 @@ Mesh loadOBJ(std::string filePath, bool buffer) {
 			// vertex
 			std::vector<std::string> values = splitAt(line, " ");
 
-			Vertex v;
-			v.position = { stof(values[0]), stof(values[1]), stof(values[2]) };
+			glm::vec3 v = { stof(values[0]), stof(values[1]), stof(values[2]) };
 
-			mesh.vertices.push_back(v);
+			positions.push_back(v);
 		}
 
 		else if (type == "f") {
 			// faces (pos/uv/normal) - indices
+
+			/*
+				f 1 2 3					lines
+				f 3/1 4/2 5/3			pos/uv
+				f 6/4/1 3/5/3 7/6/5		pos/uv/normal
+				f 7//1 8//2 9//3		pos//normal
+			*/
+
 			std::vector<std::string> values = splitAt(line, "/ ");
 
-			if (values.size() == 12) {
-				int i0 = stoi(values[0]) - 1;
-				int i1 = stoi(values[3]) - 1;
-				int i2 = stoi(values[6]) - 1;
-				int i3 = stoi(values[9]) - 1;
+			int valuesPerIndex = splitAt(splitAt(line, " ")[0], "/").size();
 
-				mesh.indices.push_back(i0);
-				mesh.indices.push_back(i1);
-				mesh.indices.push_back(i2);
-
-				mesh.indices.push_back(i0);
-				mesh.indices.push_back(i2);
-				mesh.indices.push_back(i3);
-
-				mesh.vertices[i0].uv = texCoords[stoi(values[1])];
-				mesh.vertices[i0].normal = normals[stoi(values[2]) - 1];
-
-				mesh.vertices[i1].uv = texCoords[stoi(values[4])];
-				mesh.vertices[i1].normal = normals[stoi(values[5]) - 1];
-
-				mesh.vertices[i2].uv = texCoords[stoi(values[7])];
-				mesh.vertices[i2].normal = normals[stoi(values[8]) - 1];
-
-				mesh.vertices[i3].uv = texCoords[stoi(values[9])];
-				mesh.vertices[i3].normal = normals[stoi(values[11]) - 1];
+			size_t slashIndex = line.rfind('/');
+			if (line[slashIndex + 1] == '/') {
+				// pos//normal
 			}
-			else if (values.size() == 9) {
-				int i0 = stoi(values[0]) - 1;
-				int i1 = stoi(values[3]) - 1;
-				int i2 = stoi(values[6]) - 1;
-
-				mesh.indices.push_back(i0);
-				mesh.indices.push_back(i1);
-				mesh.indices.push_back(i2);
-
-				mesh.vertices[i0].uv = texCoords[stoi(values[1])];
-				mesh.vertices[i0].normal = normals[stoi(values[2]) - 1];
-
-				mesh.vertices[i1].uv = texCoords[stoi(values[4])];
-				mesh.vertices[i1].normal = normals[stoi(values[5]) - 1];
-
-				mesh.vertices[i2].uv = texCoords[stoi(values[7])];
-				mesh.vertices[i2].normal = normals[stoi(values[8]) - 1];
+			if (valuesPerIndex == 1) {
+				throw(errno);
 			}
-			else {
-				printf("Unsupported number of face values: %i (in file %s)", values.size(), filePath);
-				return mesh;
+			if (valuesPerIndex == 2) {
+				size_t slashIndex = line.rfind('/');
+				if (line[slashIndex + 1] == '/') {
+					// pos//normal
+					throw(errno);
+				}
+				else {
+					// pos/uv
+					throw(errno);
+				}
+			}
+			if (valuesPerIndex == 3) {
+				/*pos/uv/normal*/
+
+				for (size_t i = 0; i < values.size(); i += 3) {
+					size_t posI = stol(values[i]) - 1; // indices in file start with 1
+					size_t uvI = stol(values[i + 1]) - 1;
+					size_t normI = stol(values[i + 2]) - 1;
+
+					Vertex v;
+					v.position = positions[posI];
+					v.normal = normals[normI];
+					v.uv = texCoords[uvI];
+					v.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+					currentMesh.vertices.push_back(v);
+					
+					currentMesh.indices.push_back(vCount);
+					vCount++;
+				}
 			}
 		}
 
@@ -258,17 +276,17 @@ Mesh loadOBJ(std::string filePath, bool buffer) {
 		}
 
 		else {
-			printf("In file [%s] found unparsed line: %s\n", filePath, type + " " + line);
+			printf("In file [%s] found unparsed line: %s\n", filePath.c_str(), (type + " " + line).c_str());
 		}
 	}
 
+	model.meshes.push_back(currentMesh);
+
+	if (buffer) bufferModel(model);
+	
 	file.close();
 
-	mesh.primitive = GL_TRIANGLES;
-
-	if (buffer) bufferMesh(mesh);
-
-	return mesh;
+	return model;
 }
 
 
@@ -283,37 +301,78 @@ std::vector<Material> loadMtl(std::string filePath) {
 	}
 
 	std::string line;
+	Material currentMat;
+	bool first = true;
 
 	while (std::getline(file, line)) {
 		if (line.empty()) continue;
 
-		int spaceIndex = line.find(' ');
+		size_t spaceIndex = line.find(' ');
 		if (spaceIndex == std::string::npos) continue;
 
 		std::string type = line.substr(0, spaceIndex);
 		line.erase(0, spaceIndex + 1);
 		if (line.empty()) continue;
 
-		if (type == "newmtl") {} // starts new material, gives name
+		if (type == "newmtl") {
+			// starts new material, gives name
+			if (!first) {
+				mats.push_back(currentMat);
+				currentMat = {};
+			}
+			else first = false; 
+
+			currentMat.name = line;
+		}
 
 		else if (type == "#") {} // comment
 
-		else if (type == "illum") {} // illumination mode
+		else if (type == "illum") {
+			// illumination mode
+			currentMat.illuminationMode = IlluminationMode(stoi(line));
+		}
 
-		else if (type == "Ka") {} // ambient color
+		else if (type == "Ka") {
+			// ambient color
+			std::vector<std::string> values = splitAt(line, " ");
+			currentMat.ambient = { stof(values[0]), stof(values[1]), stof(values[2]) };
+		}
 
-		else if (type == "Kd") {} // diffuse color
+		else if (type == "Kd") {
+			// diffuse color
+			std::vector<std::string> values = splitAt(line, " ");
+			currentMat.diffuse = { stof(values[0]), stof(values[1]), stof(values[2]) };
+		}
 
-		else if (type == "Ks") {} // specular color
+		else if (type == "Ks") {
+			// specular color
+			std::vector<std::string> values = splitAt(line, " ");
+			currentMat.specular = { stof(values[0]), stof(values[1]), stof(values[2]) };
+		}
 
-		else if (type == "d") {} // opaqueness
+		else if (type == "d") {
+			// opaqueness
+			currentMat.opaqueness = stof(line);
+		}
 
 		else if (type == "Ni") {} // optical density (refraction index)
 
-		else if (type == "Ns") {} // specular exponent (range 0 - 1000)
+		else if (type == "Ns") {
+			// specular exponent (range 0 - 1000)
+			currentMat.specularExponent = stoi(line);
+		}
 
-		else printf("In file [%s] found unparsed line: %s\n", filePath, type + " " + line);
+		else printf("In file [%s] found unparsed line: %s\n", filePath.c_str(), (type + " " + line).c_str());
 	}
 
+	mats.push_back(currentMat);
+
 	return mats;
+}
+
+
+void bufferModel(Model& model) {
+	for (Mesh& mesh : model.meshes) {
+		bufferMesh(mesh);
+	}
 }

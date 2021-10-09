@@ -31,6 +31,11 @@ int main() {
 	long prevFrameCount = 0;
 	float timeAccumulator = 0.0f;
 
+	Model m = loadOBJ("E:/Squares/Resources/Models/treeTriangle.obj");
+	for (Mesh& mesh : m.meshes) {
+		mesh.shader = shader;
+	}
+
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0 / 255.0f, 30 / 255.0f, 50 / 255.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -51,18 +56,12 @@ int main() {
 		handleCameraMovement(window, camera, delta);
 		handleInterfaceInput(window, camera);
 
-		//if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-		//	glm::vec3 inter = getMousePickIntersection(window, camera);
-		//	if (inter != glm::vec3(0.0f, 0.0f, 0.0f)) {
-		//		Cell* c = cellAtWorldCoords(world, inter);
-		//		if (c) {
-		//			interface.cellPicker.translation = c->worldPosition;
-		//		}
-		//	}
-		//}
-
 		renderWorld(camera);
 		renderInterface(camera);
+
+		m.meshes[0].scale = { 0.1, 0.1, 0.1 };
+		m.meshes[1].scale = { 0.1, 0.1, 0.1 };
+		renderModel(m, camera);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
