@@ -47,6 +47,7 @@ void renderMesh(Mesh& mesh, Camera& camera) {
 	glUniform3fv(glGetUniformLocation(mesh.shader, "material.diffuse"), 1, glm::value_ptr(mesh.material.diffuse));
 	glUniform3fv(glGetUniformLocation(mesh.shader, "material.specular"), 1, glm::value_ptr(mesh.material.specular));
 	glUniform1f(glGetUniformLocation(mesh.shader, "material.shininess"), mesh.material.specularExponent);
+	glUniform1f(glGetUniformLocation(mesh.shader, "material.opaqueness"), mesh.material.opaqueness);
 
 	glDrawElements(mesh.primitive, mesh.indices.size(), GL_UNSIGNED_INT, 0);
 

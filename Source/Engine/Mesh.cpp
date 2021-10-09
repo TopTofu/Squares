@@ -404,7 +404,10 @@ std::vector<Material> loadMtl(std::string filePath) {
 			currentMat.opaqueness = stof(line);
 		}
 
-		else if (type == "Ni") {} // optical density (refraction index)
+		else if (type == "Ni") {
+			// optical density (refraction index)
+			currentMat.refractionIndex = stof(line);
+		} 
 
 		else if (type == "Ns") {
 			// specular exponent (range 0 - 1000)

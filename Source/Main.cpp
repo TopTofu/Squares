@@ -41,7 +41,7 @@ int main() {
 		mesh.shader = matShader;
 	}
 
-	Light light = initLight({0.0f, 4.0f, 0.0f});
+	Light light = initLight({2.0f, 4.0f, 2.0f});
 
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0 / 255.0f, 30 / 255.0f, 50 / 255.0f, 1.0f);
