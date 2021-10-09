@@ -36,9 +36,11 @@ int main() {
 	long prevFrameCount = 0;
 	float timeAccumulator = 0.0f;
 
-	Model m = loadOBJ("E:/Squares/Resources/Models/treeTriangle.obj");
+	//Model m = loadOBJ("E:/Squares/Resources/Models/treeTriangle.obj");
+	Model m = loadOBJ("E:/Squares/Resources/Models/snowyTree.obj");
 	for (Mesh& mesh : m.meshes) {
 		mesh.shader = matShader;
+		mesh.scale = { 0.1, 0.1, 0.1 };
 	}
 
 	Light light = initLight({2.0f, 4.0f, 2.0f});
@@ -69,8 +71,7 @@ int main() {
 		renderWorld(camera);
 		renderInterface(camera);
 
-		m.meshes[0].scale = { 0.1, 0.1, 0.1 };
-		m.meshes[1].scale = { 0.1, 0.1, 0.1 };
+		
 		renderModel(m, camera);
 
 		glfwSwapBuffers(window);

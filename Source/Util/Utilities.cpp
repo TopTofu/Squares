@@ -51,7 +51,8 @@ std::vector<std::string> splitAt(std::string s, const char* c) {
 			break;
 		}
 
-		result.push_back(s.substr(0, index));
+		if (index > 0)
+			result.push_back(s.substr(0, index));
 		s.erase(0, index + 1);
 	}
 

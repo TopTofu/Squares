@@ -281,21 +281,44 @@ Model loadOBJ(std::string filePath, bool buffer) {
 			int valuesPerIndex = splitAt(splitAt(line, " ")[0], "/").size();
 
 			size_t slashIndex = line.rfind('/');
-			if (line[slashIndex + 1] == '/') {
-				// pos//normal
-			}
 			if (valuesPerIndex == 1) {
 				throw(errno);
 			}
 			if (valuesPerIndex == 2) {
-				size_t slashIndex = line.rfind('/');
+				size_t slashIndex = line.rfind('/') - 1;
 				if (line[slashIndex + 1] == '/') {
 					// pos//normal
-					throw(errno);
+					for (size_t i = 0; i < values.size(); i += 2) {
+						size_t posI = stol(values[i]) - 1; // indices in file start with 1
+						size_t normI = stol(values[i + 1]) - 1;
+
+						Vertex v;
+						v.position = positions[posI];
+						v.normal = normals[normI];
+						v.color = glm::vec4(currentMesh.material.diffuse, 1.0f);
+
+						currentMesh.vertices.push_back(v);
+
+						currentMesh.indices.push_back(vCount);
+						vCount++;
+					}
 				}
 				else {
 					// pos/uv
-					throw(errno);
+					for (size_t i = 0; i < values.size(); i += 2) {
+						size_t posI = stol(values[i]) - 1; // indices in file start with 1
+						size_t uvI = stol(values[i + 1]) - 1;
+
+						Vertex v;
+						v.position = positions[posI];
+						v.uv = texCoords[uvI];
+						v.color = glm::vec4(currentMesh.material.diffuse, 1.0f);
+
+						currentMesh.vertices.push_back(v);
+
+						currentMesh.indices.push_back(vCount);
+						vCount++;
+					}
 				}
 			}
 			if (valuesPerIndex == 3) {
