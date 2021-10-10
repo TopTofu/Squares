@@ -160,11 +160,11 @@ void scaleMeshBy(Mesh& mesh, glm::vec3 scale) {
 	mesh.scale *= scale;
 }
 
-void rotateModelBy(Model& mesh, glm::vec3 axis, float degrees) {
+void rotateMeshBy(Mesh& mesh, glm::vec3 axis, float degrees) {
 	mesh.rotation = glm::rotate(mesh.rotation, glm::radians(degrees), axis);
 }
 
-void translateMeshTo(Model& model, glm::vec3 destination) {
+void translateModelTo(Model& model, glm::vec3 destination) {
 	model.translation = destination;
 }
 
@@ -187,6 +187,8 @@ void rotateModelBy(Model& model, glm::vec3 axis, float degrees) {
 Model loadOBJ(std::string filePath, bool buffer) {
 	Model model;
 	model.filePath = filePath;
+
+	model.name = filePath.substr(0, filePath.find('.')).substr(filePath.rfind('/') + 1, filePath.size());
 
 	std::fstream file;
 	file.open(filePath, std::ios::in);
@@ -246,7 +248,6 @@ Model loadOBJ(std::string filePath, bool buffer) {
 
 		else if (type == "o") {
 			// object name
-			model.name = line;
 		}
 
 		else if (type == "g") {

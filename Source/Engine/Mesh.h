@@ -47,7 +47,7 @@ struct Material {
 	float opaqueness;
 	float refractionIndex;
 
-	float specularExponent;
+	int specularExponent;
 
 	IlluminationMode illuminationMode;
 };
@@ -76,7 +76,7 @@ struct Model {
 
 	std::vector<Mesh> meshes;
 	std::vector<Material> materials;
-	
+
 	glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -97,6 +97,14 @@ void scaleMeshTo(Mesh& mesh, glm::vec3 scale);
 void scaleMeshBy(Mesh& mesh, glm::vec3 scale);
 
 void rotateMeshBy(Mesh& mesh, glm::vec3 axis, float degrees);
+
+void translateModelTo(Model& model, glm::vec3 destination);
+void translateModelBy(Model& model, glm::vec3 offset);
+
+void scaleModelTo(Model& model, glm::vec3 scale);
+void scaleModelBy(Model& model, glm::vec3 scale);
+
+void rotateModelBy(Model& model, glm::vec3 axis, float degrees);
 
 Model loadOBJ(std::string filePath, bool buffer = true);
 std::vector<Material> loadMtl(std::string filePath);

@@ -8,6 +8,7 @@
 #include <Util/Common.h>
 #include <Game/World.h>
 #include <Game/Interface.h>
+#include <Engine/ModelLoader.h>
 
 int main() {
 
@@ -27,13 +28,9 @@ int main() {
 	cameraRotateX(camera, 40);
 
 	initWorld(10, 0.5f, shader);
-	initInterface(shader);
+	initInterface(window, shader);
 
-	Model m = loadOBJ("E:/Squares/Resources/Models/house.obj");
-	m.scale = { 0.25, 0.25, 0.25 };
-	for (Mesh& mesh : m.meshes) {
-		mesh.shader = matShader;
-	}
+	initModelLoader(matShader, { 0.25, 0.25, 0.25 });
 
 	Light light = initLight({2.0f, 4.0f, 2.0f});
 
@@ -41,21 +38,16 @@ int main() {
 		glClearColor(0 / 255.0f, 30 / 255.0f, 50 / 255.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 		updateContext(window);
 
 		applyLightToShader(light, matShader);
 		showLight(light, camera, shader);
 
 		handleCameraMovement(window, camera);
-		handleInterfaceInput(window, camera);
+		updateInterface(window, camera);
 
 		renderWorld(camera);
 		renderInterface(camera);
-
-		m.translation = interface.cellPicker.translation;
-		renderModel(m, camera);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

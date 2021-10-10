@@ -51,9 +51,3 @@ void handleCameraMovement(GLFWwindow* window, Camera& camera) {
 	}
 }
 
-
-void handleInterfaceInput(GLFWwindow* window, Camera& camera) {
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-		updateCellPicker(window, camera);
-	}
-}
