@@ -3,5 +3,5 @@
 #define WINDOW_HEIGHT 800
 
 #define CAMERA_FOV 70.0f
-#define CAMERA_SPEED 1.0f
+#define CAMERA_SPEED 3.0f
 #define CAMERA_SENSITIVITY 150.0f

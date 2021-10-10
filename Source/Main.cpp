@@ -26,7 +26,7 @@ int main() {
 	cameraRotateY(camera, 135);
 	cameraRotateX(camera, 40);
 
-	initWorld(20, 0.5f, shader);
+	initWorld(4, 0.5f, shader);
 	initInterface(shader);
 
 	float delta = 0.0f;
@@ -36,11 +36,10 @@ int main() {
 	long prevFrameCount = 0;
 	float timeAccumulator = 0.0f;
 
-	//Model m = loadOBJ("E:/Squares/Resources/Models/treeTriangle.obj");
-	Model m = loadOBJ("E:/Squares/Resources/Models/snowyTree.obj");
+	Model m = loadOBJ("E:/Squares/Resources/Models/house.obj");
+	m.scale = { 0.25, 0.25, 0.25 };
 	for (Mesh& mesh : m.meshes) {
 		mesh.shader = matShader;
-		mesh.scale = { 0.1, 0.1, 0.1 };
 	}
 
 	Light light = initLight({2.0f, 4.0f, 2.0f});
@@ -48,6 +47,8 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0 / 255.0f, 30 / 255.0f, 50 / 255.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		frameCount++;
 
@@ -71,7 +72,7 @@ int main() {
 		renderWorld(camera);
 		renderInterface(camera);
 
-		
+		m.translation = interface.cellPicker.translation;
 		renderModel(m, camera);
 
 		glfwSwapBuffers(window);

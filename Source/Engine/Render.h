@@ -15,7 +15,7 @@
 
 void initOpenGL(GLFWwindow* window, int width, int height);
 
-void renderMesh(Mesh& mesh, Camera& camera);
+void renderMesh(Mesh& mesh, Camera& camera, glm::mat4 parentMatrix = glm::mat4(1.0f));
 void renderModel(Model& model, Camera& camera);
 
 
