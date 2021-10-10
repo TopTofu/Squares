@@ -26,15 +26,8 @@ int main() {
 	cameraRotateY(camera, 135);
 	cameraRotateX(camera, 40);
 
-	initWorld(4, 0.5f, shader);
+	initWorld(10, 0.5f, shader);
 	initInterface(shader);
-
-	float delta = 0.0f;
-	double currentTime = glfwGetTime();
-	double previousTime;
-	long frameCount = 0;
-	long prevFrameCount = 0;
-	float timeAccumulator = 0.0f;
 
 	Model m = loadOBJ("E:/Squares/Resources/Models/house.obj");
 	m.scale = { 0.25, 0.25, 0.25 };
@@ -50,23 +43,12 @@ int main() {
 		
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-		frameCount++;
-
-		previousTime = currentTime;
-		currentTime = glfwGetTime();
-		delta = currentTime - previousTime;
-
-		timeAccumulator += delta;
-		if (timeAccumulator >= 1.0f) {
-			glfwSetWindowTitle(window, (std::to_string(frameCount - prevFrameCount) + " FPS").c_str());
-			prevFrameCount = frameCount;
-			timeAccumulator = 0.0f;
-		}
+		updateContext(window);
 
 		applyLightToShader(light, matShader);
 		showLight(light, camera, shader);
 
-		handleCameraMovement(window, camera, delta);
+		handleCameraMovement(window, camera);
 		handleInterfaceInput(window, camera);
 
 		renderWorld(camera);

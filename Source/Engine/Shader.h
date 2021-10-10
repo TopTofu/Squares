@@ -1,11 +1,11 @@
 #pragma once
 
+#include <glad/glad.h>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <cerrno>
-#include <glad/glad.h>
 
 
 

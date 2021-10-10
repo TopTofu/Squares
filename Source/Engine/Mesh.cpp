@@ -160,8 +160,28 @@ void scaleMeshBy(Mesh& mesh, glm::vec3 scale) {
 	mesh.scale *= scale;
 }
 
-void rotateMeshBy(Mesh& mesh, glm::vec3 axis, float degrees) {
+void rotateModelBy(Model& mesh, glm::vec3 axis, float degrees) {
 	mesh.rotation = glm::rotate(mesh.rotation, glm::radians(degrees), axis);
+}
+
+void translateMeshTo(Model& model, glm::vec3 destination) {
+	model.translation = destination;
+}
+
+void translateModelBy(Model& model, glm::vec3 offset) {
+	model.translation += offset;
+}
+
+void scaleModelTo(Model& model, glm::vec3 scale) {
+	model.scale = scale;
+}
+
+void scaleModelBy(Model& model, glm::vec3 scale) {
+	model.scale *= scale;
+}
+
+void rotateModelBy(Model& model, glm::vec3 axis, float degrees) {
+	model.rotation = glm::rotate(model.rotation, glm::radians(degrees), axis);
 }
 
 Model loadOBJ(std::string filePath, bool buffer) {
