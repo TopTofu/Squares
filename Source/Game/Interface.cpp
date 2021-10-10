@@ -6,7 +6,7 @@ Interface interface;
 void pickCell(glm::vec3 worldCoords) {
 	Cell* c = cellAtWorldCoords(worldCoords);
 	interface.cellPicker.baseMesh.translation = c->worldPosition;
-	interface.cellPicker.stuckObject.translation = c->worldPosition;
+	interface.cellPicker.stuckObject.translation = c->worldPosition + glm::vec3(world.cellSize * 0.5f, 0.0f, world.cellSize * 0.5f);
 }
 
 
@@ -31,13 +31,16 @@ void initInterface(GLFWwindow* window, GLuint shader) {
 }
 
 
-void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods){
+void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
 		Model m = getModelFromLoader("house");
 		stickModelToPicker(m);
 	}
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		unstuckModelFromPicker();
+	}
+	if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+		rotatePicker(90.0f);
 	}
 }
 
@@ -50,13 +53,14 @@ void updateInterface(GLFWwindow* window, Camera& camera) {
 void updateCellPicker(GLFWwindow* window, Camera& camera) {
 	bool hit;
 	glm::vec3 intersection = getMousePickIntersection(window, camera, hit);
-	if (hit) pickCell(intersection);
+	if (hit)
+		pickCell(intersection);
 }
 
 
 void renderInterface(Camera& camera) {
 	renderMesh(interface.cellPicker.baseMesh, camera);
-	if (interface.cellPicker.stuck) 
+	if (interface.cellPicker.stuck)
 		renderModel(interface.cellPicker.stuckObject, camera);
 }
 
@@ -70,4 +74,8 @@ void stickModelToPicker(Model& model) {
 void unstuckModelFromPicker() {
 	interface.cellPicker.stuckObject = {};
 	interface.cellPicker.stuck = false;
+}
+
+void rotatePicker(float degrees) {
+	interface.cellPicker.stuckObject.rotation = glm::rotate(interface.cellPicker.stuckObject.rotation, glm::radians(degrees), { 0, 1, 0 });
 }

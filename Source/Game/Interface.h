@@ -34,3 +34,5 @@ void pickCell(glm::vec3 worldCoords);
 
 void stickModelToPicker(Model& model);
 void unstuckModelFromPicker();
+
+void rotatePicker(float degrees);

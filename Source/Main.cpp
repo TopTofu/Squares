@@ -46,6 +46,11 @@ int main() {
 		handleCameraMovement(window, camera);
 		updateInterface(window, camera);
 
+		/*if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+			rotatePicker(90.0f);
+		}*/
+
+
 		renderWorld(camera);
 		renderInterface(camera);
 
