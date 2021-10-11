@@ -4,6 +4,7 @@
 
 #include <Engine/Mesh.h>
 #include <Engine/Render.h>
+#include <Game/Building.h>
 
 #include <vector>
 #include <algorithm>
@@ -11,6 +12,10 @@
 struct Cell {
 	glm::vec2 gridPosition;
 	glm::vec3 worldPosition;
+
+	bool occupied = false;
+
+	Building occupant;
 };
 
 
@@ -33,6 +38,7 @@ extern World world;
 
 void initWorld(int gridSize, float cellSize, GLuint shader);
 
-Cell* cellAtWorldCoords(glm::vec3 coords);
-
 void renderWorld(Camera& camera);
+
+Cell* cellAtWorldCoords(glm::vec3 coords);
+void placeBuilding(Building& building, glm::vec3 coords);

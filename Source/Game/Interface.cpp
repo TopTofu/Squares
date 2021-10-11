@@ -1,5 +1,4 @@
 #include <Game/Interface.h>
-#include <Engine/ModelLoader.h>
 
 Interface interface;
 
@@ -28,6 +27,7 @@ void initInterface(GLFWwindow* window, GLuint shader) {
 	interface.initialized = true;
 
 	glfwSetKeyCallback(window, interfaceKeyCallback);
+	glfwSetMouseButtonCallback(window, interfaceMouseCallback);
 }
 
 
@@ -44,6 +44,15 @@ void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action,
 	}
 }
 
+void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods) {
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		if (interface.cellPicker.stuck) {
+			Building b;
+			b.model = interface.cellPicker.stuckObject;
+			placeBuilding(b, interface.cellPicker.baseMesh.translation);
+		}
+	}
+}
 
 void updateInterface(GLFWwindow* window, Camera& camera) {
 	updateCellPicker(window, camera);

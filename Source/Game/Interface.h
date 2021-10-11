@@ -3,6 +3,7 @@
 #include <Game/World.h>
 #include <Engine/Render.h>
 #include <Util/Utilities.h>
+#include <Engine/ModelLoader.h>
 
 
 struct CellPicker {
@@ -24,6 +25,7 @@ extern Interface interface;
 void initInterface(GLFWwindow* window, GLuint shader);
 
 void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods);
 
 void renderInterface(Camera& camera);
 

@@ -17,7 +17,7 @@ void main()
 {
 	gl_Position = camera * modelTransform * transform * vec4(aPos, 1.0f);	
 	
-	FragPos = vec3(transform * vec4(aPos, 1.0));
+	FragPos = vec3(transform * modelTransform * vec4(aPos, 1.0));
 	TexCoord = aTexCoord;
 	Color = aColor;
 	Normal = aNormal;

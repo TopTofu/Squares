@@ -5,9 +5,7 @@
 
 
 struct Building {
-	Model* model;
-
-	glm::vec2 gridPosition;
+	Model model;
 };
 
 

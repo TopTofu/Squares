@@ -27,6 +27,15 @@ void initWorld(int gridSize, float cellSize, GLuint shader) {
 	world.initialized = true;
 }
 
+void renderWorld(Camera& camera) {
+	renderMesh(world.mesh, camera);
+
+	for (Cell& cell : world.grid) {
+		if (cell.occupied)
+			renderBuilding(cell.occupant, camera);
+	}
+}
+
 
 Cell* cellAtWorldCoords(glm::vec3 coords) {
 	int gridX = coords.x / world.cellSize;
@@ -41,6 +50,11 @@ Cell* cellAtWorldCoords(glm::vec3 coords) {
 }
 
 
-void renderWorld(Camera& camera) {
-	renderMesh(world.mesh, camera);
+void placeBuilding(Building& building, glm::vec3 coords) {
+	Cell* cell = cellAtWorldCoords(coords);
+	if (!cell->occupied)
+	{
+		cell->occupant = building;
+		cell->occupied = true;
+	}
 }
