@@ -32,7 +32,7 @@ int main() {
 	initWorld(20, 1.0f, shader);
 	initInterface(window, shader);
 
-	initModelLoader(matShader, glm::vec3(world.cellSize / 2.0f));
+	initModelLoader(matShader, glm::vec3(World.cellSize / 2.0f));
 
 	Light light = initLight({ 2.0f, 4.0f, 2.0f });
 

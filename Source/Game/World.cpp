@@ -1,9 +1,9 @@
 #include <Game/World.h>
 
-World world;
+WorldInfo World;
 
 void initWorld(int gridSize, float cellSize, GLuint shader) {
-	if (world.initialized) {
+	if (World.initialized) {
 		printf("World Struct has already been initialized!");
 		return;
 	}
@@ -14,23 +14,23 @@ void initWorld(int gridSize, float cellSize, GLuint shader) {
 			c.gridPosition = { x, y };
 			c.worldPosition = { y * cellSize, 0, x * cellSize }; // this works but i dont know why
 
-			world.grid.push_back(c);
+			World.grid.push_back(c);
 		}
 	}
 
-	world.size = gridSize;
-	world.cellSize = cellSize;
+	World.size = gridSize;
+	World.cellSize = cellSize;
 
-	world.mesh = getQuadMesh({ 0, 0, 0 }, { cellSize * gridSize, 0, 0 }, { 0, 0, cellSize * gridSize }, { 0.09f, 0.34f, 0.23f, 1.0f });
-	world.mesh.shader = shader;
+	World.mesh = getQuadMesh({ 0, 0, 0 }, { cellSize * gridSize, 0, 0 }, { 0, 0, cellSize * gridSize }, { 0.09f, 0.34f, 0.23f, 1.0f });
+	World.mesh.shader = shader;
 
-	world.initialized = true;
+	World.initialized = true;
 }
 
 void renderWorld(Camera& camera) {
-	renderMesh(world.mesh, camera);
+	renderMesh(World.mesh, camera);
 
-	for (Cell& cell : world.grid) {
+	for (Cell& cell : World.grid) {
 		if (cell.occupied)
 			renderBuilding(cell.occupant, camera);
 	}
@@ -38,14 +38,14 @@ void renderWorld(Camera& camera) {
 
 
 Cell* cellAtWorldCoords(glm::vec3 coords) {
-	int gridX = coords.x / world.cellSize;
-	int gridY = coords.z / world.cellSize;
+	int gridX = coords.x / World.cellSize;
+	int gridY = coords.z / World.cellSize;
 
-	gridX = std::clamp(gridX, 0, world.size - 1);
-	gridY = std::clamp(gridY, 0, world.size - 1);
-	int index = gridY + world.size * gridX;
+	gridX = std::clamp(gridX, 0, World.size - 1);
+	gridY = std::clamp(gridY, 0, World.size - 1);
+	int index = gridY + World.size * gridX;
 
-	Cell* c = &world.grid[index];
+	Cell* c = &World.grid[index];
 	return c;
 }
 

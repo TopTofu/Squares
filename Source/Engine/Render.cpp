@@ -23,7 +23,7 @@ void initOpenGL(GLFWwindow* window, int width, int height) {
 }
 
 
-void renderMesh(Mesh& mesh, Camera& camera, glm::mat4 parentMatrix) {
+void renderMesh(Mesh& mesh, Camera& camera, glm::mat4 parentTransform) {
 	glUseProgram(mesh.shader);
 
 	glBindVertexArray(mesh.vao);
@@ -41,9 +41,8 @@ void renderMesh(Mesh& mesh, Camera& camera, glm::mat4 parentMatrix) {
 	sca = glm::scale(sca, mesh.scale);
 
 	glm::mat4 transform = transl * rot * sca;
+	transform = parentTransform * transform;
 	glUniformMatrix4fv(glGetUniformLocation(mesh.shader, "transform"), 1, GL_FALSE, glm::value_ptr(transform));
-	
-	glUniformMatrix4fv(glGetUniformLocation(mesh.shader, "modelTransform"), 1, GL_FALSE, glm::value_ptr(parentMatrix));
 
 	glUniform3fv(glGetUniformLocation(mesh.shader, "material.ambient"), 1, glm::value_ptr(mesh.material.ambient));
 	glUniform3fv(glGetUniformLocation(mesh.shader, "material.diffuse"), 1, glm::value_ptr(mesh.material.diffuse));
