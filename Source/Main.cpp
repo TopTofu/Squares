@@ -10,6 +10,7 @@
 #include <Game/Interface.h>
 #include <Engine/ModelLoader.h>
 #include <Util/DebugInterface.h>
+#include <Game/RoadNetwork.h>
 
 
 int main() {
@@ -31,6 +32,11 @@ int main() {
 
 	initWorld(20, 1.0f, shader);
 	initInterface(window, shader);
+
+	initRoadNetwork();
+	addRoad({ 0,0 });
+	addRoad({ 0,1 });
+	addRoad({ 1,0 });
 
 	initModelLoader(matShader, glm::vec3(World.cellSize / 2.0f));
 

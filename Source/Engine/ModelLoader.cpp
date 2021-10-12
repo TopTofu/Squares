@@ -1,6 +1,6 @@
 #include <Engine/ModelLoader.h>
 
-ModelLoader modelLoader;
+ModelLoaderInfo ModelLoader;
 
 std::string modelPaths[] = {
 	"./Resources/Models/house02.obj",
@@ -19,11 +19,11 @@ void initModelLoader(GLuint shader, glm::vec3 scaling) {
 		for (Mesh& mesh : m.meshes)
 			mesh.shader = shader;
 
-		modelLoader.models.emplace(m.name, m);
+		ModelLoader.models.emplace(m.name, m);
 	}
 }
 
 
 Model getModelFromLoader(std::string name) {
-	return modelLoader.models[name];
+	return ModelLoader.models[name];
 }

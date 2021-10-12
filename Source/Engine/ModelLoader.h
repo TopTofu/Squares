@@ -5,12 +5,12 @@
 
 #include <Engine/Mesh.h>
 
-struct ModelLoader {
+struct ModelLoaderInfo {
 	std::map<std::string, Model> models;
 };
 
 
-extern ModelLoader modelLoader;
+extern ModelLoaderInfo ModelLoader;
 
 
 void initModelLoader(GLuint shader, glm::vec3 scaling = { 1,1,1 });
