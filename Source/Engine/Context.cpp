@@ -1,18 +1,18 @@
 #include <Engine/Context.h>
 
-Context context;
+ContextInfo Context;
 
 void updateContext(GLFWwindow* window) {
-	context.frameCount++;
+	Context.frameCount++;
 
-	context.prevTime = context.currentTime;
-	context.currentTime = glfwGetTime();
-	context.dt = context.currentTime - context.prevTime;
+	Context.prevTime = Context.currentTime;
+	Context.currentTime = glfwGetTime();
+	Context.dt = Context.currentTime - Context.prevTime;
 
-	context.timeAccumulator += context.dt;
-	if (context.timeAccumulator >= 1.0f) {
-		glfwSetWindowTitle(window, (std::to_string(context.frameCount - context.prevFrameCount) + " FPS").c_str());
-		context.prevFrameCount = context.frameCount;
-		context.timeAccumulator = 0.0f;
+	Context.timeAccumulator += Context.dt;
+	if (Context.timeAccumulator >= 1.0f) {
+		Context.fps = Context.frameCount - Context.prevFrameCount;
+		Context.prevFrameCount = Context.frameCount;
+		Context.timeAccumulator = 0.0f;
 	}
 }

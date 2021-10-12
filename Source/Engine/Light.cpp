@@ -14,10 +14,12 @@ Light initLight(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::v
 
 
 void applyLightToShader(Light& light, GLuint shader) {
+	glUseProgram(shader);
 	glUniform3fv(glGetUniformLocation(shader, "light.position"), 1, glm::value_ptr(light.position));
 	glUniform3fv(glGetUniformLocation(shader, "light.ambient"), 1, glm::value_ptr(light.ambient));
 	glUniform3fv(glGetUniformLocation(shader, "light.diffuse"), 1, glm::value_ptr(light.diffuse));
 	glUniform3fv(glGetUniformLocation(shader, "light.specular"), 1, glm::value_ptr(light.specular));
+	glUseProgram(0);
 }
 
 

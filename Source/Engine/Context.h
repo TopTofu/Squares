@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
-struct Context {
+struct ContextInfo {
 	float dt;
 	float fps;
 
@@ -15,7 +15,7 @@ struct Context {
 	float timeAccumulator = 0.0f;
 };
 
-extern Context context;
+extern ContextInfo Context;
 
 
 void updateContext(GLFWwindow* window);

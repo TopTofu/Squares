@@ -1,30 +1,30 @@
 #include <Game/Interface.h>
 
-Interface interface;
+InterfaceInfo Interface;
 
 void pickCell(glm::vec3 worldCoords) {
 	Cell* c = cellAtWorldCoords(worldCoords);
-	interface.cellPicker.baseMesh.translation = c->worldPosition;
-	interface.cellPicker.stuckObject.translation = c->worldPosition + glm::vec3(world.cellSize * 0.5f, 0.0f, world.cellSize * 0.5f);
+	Interface.cellPicker.baseMesh.translation = c->worldPosition;
+	Interface.cellPicker.stuckObject.translation = c->worldPosition + glm::vec3(World.cellSize * 0.5f, 0.0f, World.cellSize * 0.5f);
 }
 
 
 void initInterface(GLFWwindow* window, GLuint shader) {
-	if (interface.initialized) {
+	if (Interface.initialized) {
 		printf("Interface has already been initialized!");
 		return;
 	}
 
-	if (!world.initialized) {
+	if (!World.initialized) {
 		printf("World needs to be initilized before Interface!");
 		return;
 	}
 
-	float cellSize = world.cellSize;
-	interface.cellPicker.baseMesh = getQuadMesh({ 0, 0.001f, 0 }, { cellSize, 0, 0 }, { 0, 0, cellSize }, { 0.5f, 0.5f, 1.0f, 1.0f });
-	interface.cellPicker.baseMesh.shader = shader;
+	float cellSize = World.cellSize;
+	Interface.cellPicker.baseMesh = getQuadMesh({ 0, 0.001f, 0 }, { cellSize, 0, 0 }, { 0, 0, cellSize }, { 0.5f, 0.5f, 1.0f, 1.0f });
+	Interface.cellPicker.baseMesh.shader = shader;
 
-	interface.initialized = true;
+	Interface.initialized = true;
 
 	glfwSetKeyCallback(window, interfaceKeyCallback);
 	glfwSetMouseButtonCallback(window, interfaceMouseCallback);
@@ -44,6 +44,14 @@ void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action,
 		Model m = getModelFromLoader("house04");
 		stickModelToPicker(m);
 	}
+	if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
+		Model m = getModelFromLoader("street_straight");
+		stickModelToPicker(m);
+	}
+	if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
+		Model m = getModelFromLoader("street_curve");
+		stickModelToPicker(m);
+	}
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		unstuckModelFromPicker();
 	}
@@ -54,10 +62,10 @@ void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action,
 
 void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods) {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		if (interface.cellPicker.stuck) {
+		if (Interface.cellPicker.stuck) {
 			Building b;
-			b.model = interface.cellPicker.stuckObject;
-			placeBuilding(b, interface.cellPicker.baseMesh.translation);
+			b.model = Interface.cellPicker.stuckObject;
+			placeBuilding(b, Interface.cellPicker.baseMesh.translation);
 		}
 	}
 }
@@ -76,23 +84,23 @@ void updateCellPicker(GLFWwindow* window, Camera& camera) {
 
 
 void renderInterface(Camera& camera) {
-	renderMesh(interface.cellPicker.baseMesh, camera);
-	if (interface.cellPicker.stuck)
-		renderModel(interface.cellPicker.stuckObject, camera);
+	renderMesh(Interface.cellPicker.baseMesh, camera);
+	if (Interface.cellPicker.stuck)
+		renderModel(Interface.cellPicker.stuckObject, camera);
 }
 
 
 void stickModelToPicker(Model& model) {
-	interface.cellPicker.stuckObject = model;
-	interface.cellPicker.stuck = true;
+	Interface.cellPicker.stuckObject = model;
+	Interface.cellPicker.stuck = true;
 }
 
 
 void unstuckModelFromPicker() {
-	interface.cellPicker.stuckObject = {};
-	interface.cellPicker.stuck = false;
+	Interface.cellPicker.stuckObject = {};
+	Interface.cellPicker.stuck = false;
 }
 
 void rotatePicker(float degrees) {
-	interface.cellPicker.stuckObject.rotation = glm::rotate(interface.cellPicker.stuckObject.rotation, glm::radians(degrees), { 0, 1, 0 });
+	Interface.cellPicker.stuckObject.rotation = glm::rotate(Interface.cellPicker.stuckObject.rotation, glm::radians(degrees), { 0, 1, 0 });
 }

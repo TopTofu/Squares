@@ -13,13 +13,13 @@ struct CellPicker {
 	bool stuck = false;
 };
 
-struct Interface {
+struct InterfaceInfo {
 	CellPicker cellPicker;
 
 	bool initialized = false;
 };
 
-extern Interface interface;
+extern InterfaceInfo Interface;
 
 
 void initInterface(GLFWwindow* window, GLuint shader);

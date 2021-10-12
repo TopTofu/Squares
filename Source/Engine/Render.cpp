@@ -53,6 +53,7 @@ void renderMesh(Mesh& mesh, Camera& camera, glm::mat4 parentMatrix) {
 
 	glDrawElements(mesh.primitive, mesh.indices.size(), GL_UNSIGNED_INT, 0);
 
+	glUseProgram(0);
 	glBindVertexArray(0);
 }
 

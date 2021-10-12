@@ -19,7 +19,7 @@ struct Cell {
 };
 
 
-struct World {
+struct WorldInfo {
 	const glm::vec3 planeOrigin = { 0, 0, 0 };
 	const glm::vec3 planeNormal = { 0, 1, 0 };
 
@@ -33,7 +33,7 @@ struct World {
 	bool initialized = false;
 };
 
-extern World world;
+extern WorldInfo World;
 
 
 void initWorld(int gridSize, float cellSize, GLuint shader);

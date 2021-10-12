@@ -6,6 +6,8 @@ std::string modelPaths[] = {
 	"./Resources/Models/house02.obj",
 	"./Resources/Models/house03.obj",
 	"./Resources/Models/house04.obj",
+	"./Resources/Models/street_straight.obj",
+	"./Resources/Models/street_curve.obj",
 };
 
 

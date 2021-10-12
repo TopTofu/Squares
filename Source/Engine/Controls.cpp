@@ -2,7 +2,7 @@
 
 
 void handleCameraMovement(GLFWwindow* window, Camera& camera) {
-	const float speed = camera.speed * context.dt;
+	const float speed = camera.speed * Context.dt;
 	const float sensitivity = camera.sensitivity;
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {

@@ -9,6 +9,8 @@
 #include <Game/World.h>
 #include <Game/Interface.h>
 #include <Engine/ModelLoader.h>
+#include <Util/DebugInterface.h>
+
 
 int main() {
 
@@ -34,10 +36,13 @@ int main() {
 
 	Light light = initLight({ 2.0f, 4.0f, 2.0f });
 
+	initDebugInterface(window);
+
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0 / 255.0f, 30 / 255.0f, 50 / 255.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		updateDebugInterface(light);
 		updateContext(window);
 
 		applyLightToShader(light, matShader);
@@ -49,6 +54,8 @@ int main() {
 		renderWorld(camera);
 		renderInterface(camera);
 
+		renderDebugInterface();
+		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
