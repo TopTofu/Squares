@@ -188,7 +188,7 @@ Model loadOBJ(std::string filePath, bool buffer) {
 	Model model;
 	model.filePath = filePath;
 
-	model.name = filePath.substr(0, filePath.find('.')).substr(filePath.rfind('/') + 1, filePath.size());
+	model.name = filePath.substr(0, filePath.rfind('.')).substr(filePath.rfind('/') + 1, filePath.size());
 
 	std::fstream file;
 	file.open(filePath, std::ios::in);
@@ -456,6 +456,12 @@ std::vector<Material> loadMtl(std::string filePath) {
 		else if (type == "Ns") {
 			// specular exponent (range 0 - 1000)
 			currentMat.specularExponent = stoi(line);
+		}
+
+		else if (type == "Ke") {
+			// emission
+			std::vector<std::string> values = splitAt(line, " ");
+			currentMat.emission = { stof(values[0]), stof(values[1]), stof(values[2]) };
 		}
 
 		else printf("In file [%s] found unparsed line: %s\n", filePath.c_str(), (type + " " + line).c_str());

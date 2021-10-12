@@ -33,7 +33,15 @@ void initInterface(GLFWwindow* window, GLuint shader) {
 
 void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-		Model m = getModelFromLoader("house");
+		Model m = getModelFromLoader("house02");
+		stickModelToPicker(m);
+	}
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+		Model m = getModelFromLoader("house03");
+		stickModelToPicker(m);
+	}
+	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+		Model m = getModelFromLoader("house04");
 		stickModelToPicker(m);
 	}
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
