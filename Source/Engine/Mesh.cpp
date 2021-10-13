@@ -540,30 +540,72 @@ float curbWidthRatio = 0.15f;
 float curbHeightRatio = 0.03f;
 
 Model getStraightStreet() {
-	Mesh curbLeft = getCuboidMesh(curbWidthRatio * World.cellSize, curbHeightRatio * World.cellSize, World.cellSize);
-	Mesh curbRight = getCuboidMesh(curbWidthRatio * World.cellSize, curbHeightRatio * World.cellSize, World.cellSize);
-	translateMeshBy(curbLeft, { (streetWidthRatio * World.cellSize) / 2.0f, curbHeightRatio / 2.0f, 0 });
-	translateMeshBy(curbRight, { -(streetWidthRatio * World.cellSize) / 2.0f, curbHeightRatio / 2.0f, 0 });
-
-	Mesh road = getCuboidMesh(streetWidthRatio * World.cellSize, 0.01f, World.cellSize);
+	Mesh curbLeft;
+	Mesh curbRight;
 
 	Material curbMat;
 	curbMat.diffuse = { 0.71f, 0.62f, 0.45f };
-
 	curbMat.name = "curb";
-
-	Material roadMat;
-	roadMat.diffuse = { 0.03f, 0.03f, 0.02f };
-
-	roadMat.name = "road";
 
 	GLuint materialShader = getShader("material").handle;
 
 	curbLeft.material = curbMat;
 	curbLeft.shader = materialShader;
 
-	curbRight.material = curbMat;
-	curbRight.shader = materialShader;
+	{
+		Vertex v0;
+		v0.position = { World.cellSize * streetWidthRatio * 0.5f, 0.01f,  -World.cellSize * 0.5f };
+		v0.normal = { 0,1,0 };
+		Vertex v1;
+		v1.position = { World.cellSize * streetWidthRatio * 0.5f + 0.05f, 0.01f,  -World.cellSize * 0.5f };
+		v1.normal = { 0,1,0 };
+		Vertex v2;
+		v2.position = { World.cellSize * streetWidthRatio * 0.5f + 0.05f, 0.01f, World.cellSize * 0.5f };
+		v2.normal = { 0,1,0 };
+		Vertex v3;
+		v3.position = { World.cellSize * streetWidthRatio * 0.5f, 0.01f, World.cellSize * 0.5f };
+		v3.normal = { 0,1,0 };
+
+		curbLeft.vertices.push_back(v0);
+		curbLeft.vertices.push_back(v1);
+		curbLeft.vertices.push_back(v2);
+		curbLeft.vertices.push_back(v3);
+	}
+
+
+	curbLeft.indices = { 0,1,2, 0,2,3 };
+
+	curbRight = curbLeft;
+
+	translateMeshBy(curbRight, { -World.cellSize * streetWidthRatio - 0.05f, 0, 0 });
+
+	Mesh road;
+
+	{
+		Vertex v0;
+		v0.position = { World.cellSize * streetWidthRatio * 0.5f, 0.01f,  -World.cellSize * 0.5f };
+		v0.normal = { 0,1,0 };
+		Vertex v1;
+		v1.position = { World.cellSize * streetWidthRatio * 0.5f, 0.01f,  World.cellSize * 0.5f };
+		v1.normal = { 0,1,0 };
+		Vertex v2;
+		v2.position = { -World.cellSize * streetWidthRatio * 0.5f, 0.01f, World.cellSize * 0.5f };
+		v2.normal = { 0,1,0 };
+		Vertex v3;
+		v3.position = { -World.cellSize * streetWidthRatio * 0.5f, 0.01f, -World.cellSize * 0.5f };
+		v3.normal = { 0,1,0 };
+
+		road.vertices.push_back(v0);
+		road.vertices.push_back(v1);
+		road.vertices.push_back(v2);
+		road.vertices.push_back(v3);
+	}
+
+	road.indices = { 0,1,2, 0,2,3 };
+
+	Material roadMat;
+	roadMat.diffuse = { 0.03f, 0.03f, 0.02f };
+	roadMat.name = "road";
 
 	road.material = roadMat;
 	road.shader = materialShader;
@@ -574,6 +616,8 @@ Model getStraightStreet() {
 	model.meshes.push_back(road);
 
 	model.name = "street_straight";
+
+	bufferModel(model);
 
 	return model;
 }

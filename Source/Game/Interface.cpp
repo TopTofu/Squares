@@ -49,7 +49,7 @@ void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action,
 		stickModelToPicker(m);
 	}
 	if (key == GLFW_KEY_5 && action == GLFW_PRESS) {
-		Model m = getModelFromLoader("street_curve");
+		Model m = getStraightStreet();
 		stickModelToPicker(m);
 	}
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
