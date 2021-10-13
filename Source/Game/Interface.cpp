@@ -45,7 +45,7 @@ void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action,
 		stickModelToPicker(m);
 	}
 	if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
-		Model m = getModelFromLoader("street_straight");
+		Model m = getCurvedStreet();
 		stickModelToPicker(m);
 	}
 	if (key == GLFW_KEY_5 && action == GLFW_PRESS) {

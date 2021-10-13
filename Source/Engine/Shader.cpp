@@ -1,7 +1,41 @@
 #include "Engine/Shader.h"
 
-std::string readFileContents(const char* filePath) {
-	std::ifstream in(filePath, std::ios::binary);
+ShaderLoaderInfo ShaderLoader;
+
+std::vector<std::string> shaderFiles = {
+	"./Resources/Shader/default.vert",
+	"./Resources/Shader/default.frag",
+
+	"./Resources/Shader/material.vert",
+	"./Resources/Shader/material.frag",
+};
+
+void loadShaders() {
+	for (int i = 0; i < shaderFiles.size(); i += 2) {
+		GLuint vertShader = compileShader(shaderFiles[i]);
+		GLuint fragShader = compileShader(shaderFiles[i + 1]);
+		GLuint shader = createProgram(vertShader, fragShader);
+
+		size_t i1 = shaderFiles[i].rfind("/");
+		size_t i2 = shaderFiles[i].rfind(".");
+
+		std::string name = shaderFiles[i].substr(0, i2).substr(i1 + 1, shaderFiles[i].size());
+
+		ShaderInfo s;
+		s.handle = shader;
+		s.name = name;
+
+		ShaderLoader.shaders.emplace(s.name, s);
+	}
+}
+
+ShaderInfo getShader(std::string name) {
+	return ShaderLoader.shaders[name];
+}
+
+
+std::string readFileContents(std::string filePath) {
+	std::ifstream in(filePath.c_str(), std::ios::binary);
 	if (in) {
 		std::string contents;
 		in.seekg(0, std::ios::end);
@@ -14,19 +48,18 @@ std::string readFileContents(const char* filePath) {
 	throw(errno);
 }
 
-std::string getExtension(const char* filePath) {
-	std::string path = filePath;
-	std::size_t pos = path.rfind('.');
+std::string getExtension(std::string filePath) {
+	std::size_t pos = filePath.rfind('.');
 
 	if (pos != std::string::npos) {
-		return path.substr(pos);
+		return filePath.substr(pos);
 	}
 
 	return "";
 }
 
 
-GLuint compileShader(const char* filePath) {
+GLuint compileShader(std::string filePath) {
 	std::string content = readFileContents(filePath);
 	const char* source = content.c_str();
 	std::string extension = getExtension(filePath);

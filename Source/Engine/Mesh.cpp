@@ -1,4 +1,6 @@
 #include <Engine/Mesh.h>
+#include <Game/World.h>
+#include <Engine\Shader.h>
 
 
 Mesh getQuadMesh(glm::vec3 origin, glm::vec3 s0, glm::vec3 s1, glm::vec4 color, bool buffer) {
@@ -451,7 +453,7 @@ std::vector<Material> loadMtl(std::string filePath) {
 		else if (type == "Ni") {
 			// optical density (refraction index)
 			currentMat.refractionIndex = stof(line);
-		} 
+		}
 
 		else if (type == "Ns") {
 			// specular exponent (range 0 - 1000)
@@ -470,4 +472,227 @@ std::vector<Material> loadMtl(std::string filePath) {
 	mats.push_back(currentMat);
 
 	return mats;
+}
+
+
+Mesh getCuboidMesh(float xExtent, float yExtent, float zExtent, bool buffer) {
+	Mesh m;
+
+	m.vertices = {
+		Vertex{ { -xExtent / 2.0f, -yExtent / 2.0f,  -zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,0,-1} },
+		Vertex{ {  xExtent / 2.0f, -yExtent / 2.0f,  -zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,0,-1} },
+		Vertex{ {  xExtent / 2.0f,  yExtent / 2.0f,  -zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,0,-1} },
+		Vertex{ { -xExtent / 2.0f,  yExtent / 2.0f,  -zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,0,-1} },
+
+		Vertex{ {  xExtent / 2.0f, -yExtent / 2.0f, -zExtent / 2.0f}, {0,0}, {1,1,1,1}, {1,0,0} },
+		Vertex{ {  xExtent / 2.0f, -yExtent / 2.0f,  zExtent / 2.0f}, {0,0}, {1,1,1,1}, {1,0,0} },
+		Vertex{ {  xExtent / 2.0f,  yExtent / 2.0f,  zExtent / 2.0f}, {0,0}, {1,1,1,1}, {1,0,0} },
+		Vertex{ {  xExtent / 2.0f,  yExtent / 2.0f, -zExtent / 2.0f}, {0,0}, {1,1,1,1}, {1,0,0} },
+
+		Vertex{ {-xExtent / 2.0f, -yExtent / 2.0f, -zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,-1,0} },
+		Vertex{ { xExtent / 2.0f, -yExtent / 2.0f, -zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,-1,0} },
+		Vertex{ { xExtent / 2.0f, -yExtent / 2.0f,  zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,-1,0} },
+		Vertex{ {-xExtent / 2.0f, -yExtent / 2.0f,  zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,-1,0} },
+
+		Vertex{ {-xExtent / 2.0f,  yExtent / 2.0f, -zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,1,0} },
+		Vertex{ { xExtent / 2.0f,  yExtent / 2.0f, -zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,1,0} },
+		Vertex{ { xExtent / 2.0f,  yExtent / 2.0f,  zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,1,0} },
+		Vertex{ {-xExtent / 2.0f,  yExtent / 2.0f,  zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,1,0} },
+
+		Vertex{ { -xExtent / 2.0f, -yExtent / 2.0f, -zExtent / 2.0f}, {0,0}, {1,1,1,1}, {-1,0,0} },
+		Vertex{ { -xExtent / 2.0f, -yExtent / 2.0f,  zExtent / 2.0f}, {0,0}, {1,1,1,1}, {-1,0,0} },
+		Vertex{ { -xExtent / 2.0f,  yExtent / 2.0f,  zExtent / 2.0f}, {0,0}, {1,1,1,1}, {-1,0,0} },
+		Vertex{ { -xExtent / 2.0f,  yExtent / 2.0f, -zExtent / 2.0f}, {0,0}, {1,1,1,1}, {-1,0,0} },
+
+		Vertex{ { -xExtent / 2.0f,  -yExtent / 2.0f,  zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,0,1} },
+		Vertex{ {  xExtent / 2.0f,  -yExtent / 2.0f,  zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,0,1} },
+		Vertex{ {  xExtent / 2.0f,   yExtent / 2.0f,  zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,0,1} },
+		Vertex{ { -xExtent / 2.0f,   yExtent / 2.0f,  zExtent / 2.0f}, {0,0}, {1,1,1,1}, {0,0,1} },
+	};
+
+	m.indices = std::vector<GLuint>{
+			0, 1, 2,
+			0, 2, 3,
+
+			4, 5, 6,
+			4, 6, 7,
+
+			8, 9, 10,
+			8, 10, 11,
+
+			12, 13, 14,
+			12, 14, 15,
+
+			16, 17, 18,
+			16, 18, 19,
+
+			20, 21, 22,
+			20, 22, 23
+	};
+
+	if (buffer) bufferMesh(m);
+
+	return m;
+}
+
+float streetWidthRatio = 1.0f / 2.0f;
+float curbWidthRatio = 0.15f;
+float curbHeightRatio = 0.03f;
+
+Model getStraightStreet() {
+	Mesh curbLeft = getCuboidMesh(curbWidthRatio * World.cellSize, curbHeightRatio * World.cellSize, World.cellSize);
+	Mesh curbRight = getCuboidMesh(curbWidthRatio * World.cellSize, curbHeightRatio * World.cellSize, World.cellSize);
+	translateMeshBy(curbLeft, { (streetWidthRatio * World.cellSize) / 2.0f, curbHeightRatio / 2.0f, 0 });
+	translateMeshBy(curbRight, { -(streetWidthRatio * World.cellSize) / 2.0f, curbHeightRatio / 2.0f, 0 });
+
+	Mesh road = getCuboidMesh(streetWidthRatio * World.cellSize, 0.01f, World.cellSize);
+
+	Material curbMat;
+	curbMat.diffuse = { 0.71f, 0.62f, 0.45f };
+
+	curbMat.name = "curb";
+
+	Material roadMat;
+	roadMat.diffuse = { 0.03f, 0.03f, 0.02f };
+
+	roadMat.name = "road";
+
+	GLuint materialShader = getShader("material").handle;
+
+	curbLeft.material = curbMat;
+	curbLeft.shader = materialShader;
+
+	curbRight.material = curbMat;
+	curbRight.shader = materialShader;
+
+	road.material = roadMat;
+	road.shader = materialShader;
+
+	Model model;
+	model.meshes.push_back(curbRight);
+	model.meshes.push_back(curbLeft);
+	model.meshes.push_back(road);
+
+	model.name = "street_straight";
+
+	return model;
+}
+
+
+Model getCurvedStreet() {
+	float r = streetWidthRatio * World.cellSize;
+	int numSegments = 40; // segements for full circle
+
+	Mesh curbLeft;
+	Mesh curbRight;
+
+	int last;
+	for (int i = 0; i < numSegments; i++) {
+		float theta = 2.0f * 3.14159f * float(i) / float(numSegments);
+		if (theta > 3.14159f) break;
+
+		float x1 = r * cosf(theta) - r * 0.5f;
+		float z1 = r * sinf(theta) - r * 0.5f;
+
+		float x2 = r * cosf(theta) * 1.1f - r * 0.5f;
+		float z2 = r * sinf(theta) * 1.1f - r * 0.5f;
+
+		Vertex v1;
+		v1.position = glm::vec3(x1, 0.01f, z1);
+		v1.normal = { 0, 1, 0 };
+
+		Vertex v2;
+		v2.position = glm::vec3(x2, 0.01f, z2);
+		v2.normal = { 0, 1, 0 };
+
+		curbLeft.vertices.push_back(v1);
+		curbLeft.vertices.push_back(v2);
+
+		if (i % 2 == 1) {
+			curbLeft.indices.push_back(i - 1);
+			curbLeft.indices.push_back(i);
+			curbLeft.indices.push_back(i + 2);
+
+			curbLeft.indices.push_back(i - 1);
+			curbLeft.indices.push_back(i + 2);
+			curbLeft.indices.push_back(i + 1);
+
+			last = i + 2;
+		}
+
+		float x3 = r * cosf(theta) * 0.8f * 0.5f - r;
+		float z3 = r * sinf(theta) * 0.8f * 0.5f - r;
+
+		float x4 = r * cosf(theta) * 0.5f - r;
+		float z4 = r * sinf(theta) * 0.5f - r;
+
+		Vertex v3;
+		v3.position = glm::vec3(x3, 0.01f, z3);
+		v3.normal = { 0, 1, 0 };
+
+		Vertex v4;
+		v4.position = glm::vec3(x4, 0.01f, z4);
+		v4.normal = { 0, 1, 0 };
+
+		curbRight.vertices.push_back(v3);
+		curbRight.vertices.push_back(v4);
+
+		if (i % 2 == 1) {
+			curbRight.indices.push_back(i - 1);
+			curbRight.indices.push_back(i);
+			curbRight.indices.push_back(i + 2);
+
+			curbRight.indices.push_back(i - 1);
+			curbRight.indices.push_back(i + 2);
+			curbRight.indices.push_back(i + 1);
+		}
+	}
+
+	curbLeft.vertices.push_back(Vertex{ { -World.cellSize * 0.5f, 0.01f, World.cellSize * streetWidthRatio * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	curbLeft.vertices.push_back(Vertex{ { -World.cellSize * 0.5f, 0.01f, World.cellSize * streetWidthRatio * 0.5f + 0.05f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	size_t offset = curbLeft.vertices.size() - 1;
+
+	curbLeft.indices.push_back(offset - 1);
+	curbLeft.indices.push_back(offset);
+	curbLeft.indices.push_back(last);
+
+	curbLeft.indices.push_back(offset - 1);
+	curbLeft.indices.push_back(last - 1);
+	curbLeft.indices.push_back(last);
+
+	curbLeft.vertices.push_back(Vertex{ { World.cellSize * streetWidthRatio * 0.5f, 0.01f, -World.cellSize * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	curbLeft.vertices.push_back(Vertex{ { World.cellSize * streetWidthRatio * 0.5f + 0.05f, 0.01f, -World.cellSize * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	offset = curbLeft.vertices.size() - 1;
+
+	curbLeft.indices.push_back(offset - 1);
+	curbLeft.indices.push_back(offset);
+	curbLeft.indices.push_back(1);
+
+	curbLeft.indices.push_back(offset - 1);
+	curbLeft.indices.push_back(1);
+	curbLeft.indices.push_back(0);
+
+
+	Material curbMat;
+	curbMat.diffuse = { 0.71f, 0.62f, 0.45f };
+	curbMat.name = "curb";
+
+	GLuint materialShader = getShader("material").handle;
+
+	curbLeft.material = curbMat;
+	curbLeft.shader = materialShader;
+
+	curbRight.material = curbMat;
+	curbRight.shader = materialShader;
+
+	bufferMesh(curbLeft);
+	bufferMesh(curbRight);
+
+	Model model;
+	model.meshes.push_back(curbLeft);
+	model.meshes.push_back(curbRight);
+
+	model.name = "street_curve";
+
+	return model;
 }

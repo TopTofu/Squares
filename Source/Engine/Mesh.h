@@ -40,16 +40,16 @@ struct Material {
 	std::string name;
 	std::string filePath;
 
-	glm::vec3 ambient;
-	glm::vec3 diffuse;
-	glm::vec3 specular;
+	glm::vec3 ambient = { 1, 1, 1 };
+	glm::vec3 diffuse = { 0, 0, 0 };
+	glm::vec3 specular = { 0, 0, 0 };
 
-	glm::vec3 emission;
+	glm::vec3 emission = { 0, 0, 0 };
 
-	float opaqueness;
-	float refractionIndex;
+	float opaqueness = 1.0f;
+	float refractionIndex = 1.0f;
 
-	int specularExponent;
+	int specularExponent = 0;
 
 	IlluminationMode illuminationMode;
 };
@@ -110,3 +110,8 @@ void rotateModelBy(Model& model, glm::vec3 axis, float degrees);
 
 Model loadOBJ(std::string filePath, bool buffer = true);
 std::vector<Material> loadMtl(std::string filePath);
+
+Mesh getCuboidMesh(float xExtent, float yExtent, float zExtent, bool buffer = true);
+
+Model getStraightStreet();
+Model getCurvedStreet();
