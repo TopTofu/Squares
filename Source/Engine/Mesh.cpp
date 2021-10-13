@@ -716,7 +716,6 @@ Model getCurvedStreet() {
 	curbLeft.indices.push_back(1);
 	curbLeft.indices.push_back(0);
 
-
 	Material curbMat;
 	curbMat.diffuse = { 0.71f, 0.62f, 0.45f };
 	curbMat.name = "curb";
@@ -729,14 +728,80 @@ Model getCurvedStreet() {
 	curbRight.material = curbMat;
 	curbRight.shader = materialShader;
 
-	bufferMesh(curbLeft);
-	bufferMesh(curbRight);
 
 	Model model;
 	model.meshes.push_back(curbLeft);
 	model.meshes.push_back(curbRight);
 
+	Mesh road;
+
+	for (int i = 0; i < numSegments; i++) {
+		float theta = 2.0f * 3.14159f * float(i) / float(numSegments);
+		if (theta > 3.14159f) break;
+
+		float x1 = r * cosf(theta) * 0.5f - r;
+		float z1 = r * sinf(theta) * 0.5f - r;
+
+		float x2 = r * cosf(theta) - r * 0.5f;
+		float z2 = r * sinf(theta) - r * 0.5f;
+
+		Vertex v1;
+		v1.position = glm::vec3(x1, 0.01f, z1);
+		v1.normal = { 0, 1, 0 };
+
+		Vertex v2;
+		v2.position = glm::vec3(x2, 0.01f, z2);
+		v2.normal = { 0, 1, 0 };
+
+		road.vertices.push_back(v1);
+		road.vertices.push_back(v2);
+
+		if (i % 2 == 1) {
+			road.indices.push_back(i - 1);
+			road.indices.push_back(i);
+			road.indices.push_back(i + 2);
+
+			road.indices.push_back(i - 1);
+			road.indices.push_back(i + 2);
+			road.indices.push_back(i + 1);
+
+			last = i + 2;
+		}
+	}
+
+	offset = road.vertices.size() - 1;
+
+	road.vertices.push_back(Vertex{ { -World.cellSize * 0.5f, 0.01f, -World.cellSize * streetWidthRatio * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	road.vertices.push_back(Vertex{ { -World.cellSize * 0.5f, 0.01f, World.cellSize * streetWidthRatio * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	road.vertices.push_back(Vertex{ { -World.cellSize * 0.25f, 0.01f,  World.cellSize * streetWidthRatio * 0.5}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+
+	road.indices.push_back(offset + 1);
+	road.indices.push_back(offset + 2);
+	road.indices.push_back(offset + 3);
+
+	offset = road.vertices.size() - 1;
+
+	road.vertices.push_back(Vertex{ { -World.cellSize * streetWidthRatio * 0.5f, 0.01f, -World.cellSize * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	road.vertices.push_back(Vertex{ { World.cellSize * streetWidthRatio * 0.5f, 0.01f, -World.cellSize * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	road.vertices.push_back(Vertex{ { World.cellSize * streetWidthRatio * 0.5, 0.01f,  -World.cellSize * 0.25f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+
+	road.indices.push_back(offset + 1);
+	road.indices.push_back(offset + 2);
+	road.indices.push_back(offset + 3);
+
+
+	Material roadMat;
+	roadMat.diffuse = { 0.03f, 0.03f, 0.02f };
+	roadMat.name = "road";
+
+	road.material = roadMat;
+	road.shader = materialShader;
+
+	model.meshes.push_back(road);
+
 	model.name = "street_curve";
+
+	bufferModel(model);
 
 	return model;
 }
