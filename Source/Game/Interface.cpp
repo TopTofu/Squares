@@ -1,6 +1,8 @@
 #include <Game/Interface.h>
+#include <Game\RoadNetwork.h>
 
 InterfaceInfo Interface;
+
 
 void pickCell(glm::vec3 worldCoords) {
 	Cell* c = cellAtWorldCoords(worldCoords);
@@ -74,11 +76,19 @@ void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action,
 
 void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods) {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		if (Interface.cellPicker.stuck) {
+		/*if (Interface.cellPicker.stuck) {
 			Building b;
 			b.model = Interface.cellPicker.stuckObject;
 			placeBuilding(b, Interface.cellPicker.baseMesh.translation);
+		}*/
+
+		Cell* cell = cellAtWorldCoords(Interface.cellPicker.baseMesh.translation);
+		if (!cell->occupied)
+		{
+			addRoad(cell->gridPosition);
 		}
+		
+		//printf("GridPosition: x>%f z>%f || WorldCoords: x>%f y>%f\n", cell->gridPosition.x, cell->gridPosition.y, cell->worldPosition.x, cell->worldPosition.z);s
 	}
 }
 
@@ -90,8 +100,9 @@ void updateInterface(GLFWwindow* window, Camera& camera) {
 void updateCellPicker(GLFWwindow* window, Camera& camera) {
 	bool hit;
 	glm::vec3 intersection = getMousePickIntersection(window, camera, hit);
-	if (hit)
+	if (hit) {
 		pickCell(intersection);
+	}
 }
 
 

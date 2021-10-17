@@ -12,7 +12,7 @@ void initWorld(int gridSize, float cellSize, GLuint shader) {
 		for (int x = 0; x < gridSize; x++) {
 			Cell c;
 			c.gridPosition = { x, y };
-			c.worldPosition = { y * cellSize, 0, x * cellSize }; // this works but i dont know why
+			c.worldPosition = { x * cellSize, 0, y * cellSize };
 
 			World.grid.push_back(c);
 		}
@@ -26,6 +26,7 @@ void initWorld(int gridSize, float cellSize, GLuint shader) {
 
 	World.initialized = true;
 }
+
 
 void renderWorld(Camera& camera) {
 	renderMesh(World.mesh, camera);
@@ -43,18 +44,42 @@ Cell* cellAtWorldCoords(glm::vec3 coords) {
 
 	gridX = std::clamp(gridX, 0, World.size - 1);
 	gridY = std::clamp(gridY, 0, World.size - 1);
-	int index = gridY + World.size * gridX;
+	int index = gridX + gridY * World.size;
 
 	Cell* c = &World.grid[index];
 	return c;
 }
 
 
-void placeBuilding(Building& building, glm::vec3 coords) {
-	Cell* cell = cellAtWorldCoords(coords);
-	if (!cell->occupied)
-	{
+void placeBuilding(Building& building, glm::vec3 worldCoords, bool force) {
+	Cell* cell = cellAtWorldCoords(worldCoords);
+	if (!cell->occupied || force) {
 		cell->occupant = building;
 		cell->occupied = true;
 	}
 }
+
+void placeBuilding(Building& building, glm::vec2 gridCoords, bool force) {
+	Cell* cell = &World.grid[gridCoords.x + World.size * gridCoords.y];
+	if (!cell->occupied || force) {
+		cell->occupant = building;
+		cell->occupant.model.translation = cell->worldPosition + glm::vec3(World.cellSize * 0.5f, 0, World.cellSize * 0.5f);
+		cell->occupied = true;
+	}
+
+}
+
+
+void removeBuilding(glm::vec2 gridCoords) {
+	Cell* cell = &World.grid[gridCoords.x + World.size * gridCoords.y];
+	cell->occupant = {};
+	cell->occupied = false;
+}
+
+
+void removeBuilding(glm::vec3 worldCoords) {
+	Cell* cell = cellAtWorldCoords(worldCoords);
+	cell->occupant = {};
+	cell->occupied = false;
+}
+

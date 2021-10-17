@@ -32,3 +32,5 @@ extern RoadNetworkInfo RoadNetwork;
 void initRoadNetwork();
 
 void addRoad(glm::vec2 gridPosition);
+void updateRoadMeshInCell(glm::vec2 gridPosition);
+void printNetwork();

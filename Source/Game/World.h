@@ -41,4 +41,8 @@ void initWorld(int gridSize, float cellSize, GLuint shader);
 void renderWorld(Camera& camera);
 
 Cell* cellAtWorldCoords(glm::vec3 coords);
-void placeBuilding(Building& building, glm::vec3 coords);
+void placeBuilding(Building& building, glm::vec3 worldCoords, bool force = false);
+void placeBuilding(Building& building, glm::vec2 gridCoords, bool force = false);
+void removeBuilding(glm::vec2 gridCoords);
+void removeBuilding(glm::vec3 worldCoords);
+

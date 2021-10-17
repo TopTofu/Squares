@@ -36,9 +36,6 @@ int main() {
 	initInterface(window, getShader("default").handle);
 
 	initRoadNetwork();
-	addRoad({ 0,0 });
-	addRoad({ 0,1 });
-	addRoad({ 1,0 });
 
 	initModelLoader(getShader("material").handle, glm::vec3(World.cellSize / 2.0f));
 
