@@ -900,7 +900,7 @@ Model getTJunction() {
 	curbRight.shader = materialShader;
 
 	curbLeft = curbRight;
-	rotateMeshBy(curbLeft, {0,1,0}, 90);
+	rotateMeshBy(curbLeft, { 0,1,0 }, 90);
 
 	model.meshes.push_back(curbTop);
 	model.meshes.push_back(curbRight);
@@ -913,7 +913,7 @@ Model getTJunction() {
 
 Model getXJunction() {
 	Model model;
-	
+
 	Mesh curb0;
 	Mesh curb1;
 	Mesh curb2;
@@ -941,20 +941,39 @@ Model getXJunction() {
 			v2.position = glm::vec3(x2, 0.01f, z2);
 			v2.normal = { 0, 1, 0 };
 
-			curbRight.vertices.push_back(v1);
-			curbRight.vertices.push_back(v2);
+			curb0.vertices.push_back(v1);
+			curb0.vertices.push_back(v2);
 
 			if (i % 2 == 1) {
-				curbRight.indices.push_back(i - 1);
-				curbRight.indices.push_back(i);
-				curbRight.indices.push_back(i + 2);
+				curb0.indices.push_back(i - 1);
+				curb0.indices.push_back(i);
+				curb0.indices.push_back(i + 2);
 
-				curbRight.indices.push_back(i - 1);
-				curbRight.indices.push_back(i + 2);
-				curbRight.indices.push_back(i + 1);
+				curb0.indices.push_back(i - 1);
+				curb0.indices.push_back(i + 2);
+				curb0.indices.push_back(i + 1);
 			}
 		}
-
-		rotateMeshBy(curbRight, { 0,1,0 }, 180);
 	}
+
+	Material curbMat;
+	curbMat.diffuse = { 0.71f, 0.62f, 0.45f };
+
+	GLuint materialShader = getShader("material").handle;
+
+	curb0.material = curbMat;
+	curb0.shader = materialShader;
+
+	curb1 = curb2 = curb3 = curb0;
+	rotateMeshBy(curb1, { 0,1,0 }, 90);
+	rotateMeshBy(curb2, { 0,1,0 }, 180);
+	rotateMeshBy(curb3, { 0,1,0 }, 270);
+
+	model.meshes.push_back(curb0);
+	model.meshes.push_back(curb1);
+	model.meshes.push_back(curb2);
+	model.meshes.push_back(curb3);
+
+	bufferModel(model);
+	return model;
 }

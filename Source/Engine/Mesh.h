@@ -116,3 +116,4 @@ Mesh getCuboidMesh(float xExtent, float yExtent, float zExtent, bool buffer = tr
 Model getStraightStreet();
 Model getCurvedStreet();
 Model getTJunction();
+Model getXJunction();
