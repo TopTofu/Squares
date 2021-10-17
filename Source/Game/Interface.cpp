@@ -60,6 +60,10 @@ void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action,
 		Model m = getXJunction();
 		stickModelToPicker(m);
 	}
+	if (key == GLFW_KEY_8 && action == GLFW_PRESS) {
+		Model m = getRoadEnd();
+		stickModelToPicker(m);
+	}
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		unstuckModelFromPicker();
 	}

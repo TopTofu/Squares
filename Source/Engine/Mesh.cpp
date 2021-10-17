@@ -613,7 +613,7 @@ Model getStraightStreet() {
 	Model model;
 	model.meshes.push_back(curbRight);
 	model.meshes.push_back(curbLeft);
-	model.meshes.push_back(road);
+	//model.meshes.push_back(road);
 
 	model.name = "street_straight";
 
@@ -797,7 +797,7 @@ Model getCurvedStreet() {
 	road.material = roadMat;
 	road.shader = materialShader;
 
-	model.meshes.push_back(road);
+	//model.meshes.push_back(road);
 
 	model.name = "street_curve";
 
@@ -973,6 +973,67 @@ Model getXJunction() {
 	model.meshes.push_back(curb1);
 	model.meshes.push_back(curb2);
 	model.meshes.push_back(curb3);
+
+	bufferModel(model);
+	return model;
+}
+
+
+Model getRoadEnd() {
+	Model model;
+
+	Mesh topCurb;
+	Mesh leftCurb;
+	Mesh rightCurb;
+	
+	int numSegments = 40;
+	float r = streetWidthRatio * World.cellSize * 0.5f;
+
+	{
+		for (int i = 0; i < numSegments; i++) {
+			float theta = 2.0f * 3.14159f * float(i) / float(numSegments);
+			if (theta > 3.14159f * 2) break;
+
+			float x1 = r * cosf(theta);
+			float z1 = r * sinf(theta);
+
+			float x2 = r * cosf(theta) * 1.2f;
+			float z2 = r * sinf(theta) * 1.2f;
+
+			Vertex v1;
+			v1.position = glm::vec3(x1, 0.01f, z1);
+			v1.normal = { 0, 1, 0 };
+
+			Vertex v2;
+			v2.position = glm::vec3(x2, 0.01f, z2);
+			v2.normal = { 0, 1, 0 };
+
+			topCurb.vertices.push_back(v1);
+			topCurb.vertices.push_back(v2);
+
+			if (i % 2 == 1) {
+				topCurb.indices.push_back(i - 1);
+				topCurb.indices.push_back(i);
+				topCurb.indices.push_back(i + 2);
+
+				topCurb.indices.push_back(i - 1);
+				topCurb.indices.push_back(i + 2);
+				topCurb.indices.push_back(i + 1);
+			}
+		}
+	}
+
+	Material curbMat;
+	curbMat.diffuse = { 0.71f, 0.62f, 0.45f };
+
+	GLuint materialShader = getShader("material").handle;
+
+	topCurb.material = curbMat;
+	topCurb.shader = materialShader;
+
+	translateMeshBy(topCurb, { 0, 0, -0.5f });
+
+	model.meshes.push_back(topCurb);
 
 	bufferModel(model);
 	return model;

@@ -117,3 +117,4 @@ Model getStraightStreet();
 Model getCurvedStreet();
 Model getTJunction();
 Model getXJunction();
+Model getRoadEnd();
