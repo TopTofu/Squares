@@ -52,6 +52,10 @@ void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action,
 		Model m = getStraightStreet();
 		stickModelToPicker(m);
 	}
+	if (key == GLFW_KEY_6 && action == GLFW_PRESS) {
+		Model m = getTJunction();
+		stickModelToPicker(m);
+	}
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		unstuckModelFromPicker();
 	}
