@@ -13,8 +13,26 @@ struct CellPicker {
 	bool stuck = false;
 };
 
+
+struct InterfaceElement {
+	Mesh mesh;
+	void (*callback)();
+	bool clickable;
+
+	glm::vec3 p0;
+	glm::vec3 p1;
+	glm::vec3 p2;
+	glm::vec3 p3;
+};
+
+
 struct InterfaceInfo {
 	CellPicker cellPicker;
+
+	std::vector <InterfaceElement> elements;
+
+	bool hovering = false;
+	InterfaceElement* hoveredElement;
 
 	bool initialized = false;
 };
@@ -23,11 +41,15 @@ extern InterfaceInfo Interface;
 
 
 void initInterface(GLFWwindow* window, GLuint shader);
+void initElements();
+
+void sampleCallback();
 
 void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods);
 
 void renderInterface(Camera& camera);
+void renderInterfaceElement(Mesh mesh);
 
 void updateInterface(GLFWwindow* window, Camera& camera);
 
@@ -38,3 +60,5 @@ void stickModelToPicker(Model& model);
 void unstuckModelFromPicker();
 
 void rotatePicker(float degrees);
+
+InterfaceElement* getInterfaceElementAtScreenSpace(double x, double y, bool* found);

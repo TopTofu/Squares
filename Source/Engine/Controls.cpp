@@ -30,7 +30,8 @@ void handleCameraMovement(GLFWwindow* window, Camera& camera) {
 			camera.firstClick = false;
 		}
 
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		// this laggs everything when called
+		//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); 
 
 		double mouseX;
 		double mouseY;

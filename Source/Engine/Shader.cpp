@@ -8,6 +8,9 @@ std::vector<std::string> shaderFiles = {
 
 	"./Resources/Shader/material.vert",
 	"./Resources/Shader/material.frag",
+
+	"./Resources/Shader/interface.vert",
+	"./Resources/Shader/interface.frag",
 };
 
 void loadShaders() {

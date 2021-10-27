@@ -51,6 +51,7 @@ void addRoad(glm::vec2 gridPosition) {
 }
 
 
+
 void updateRoadMeshInCell(glm::vec2 gridPosition) {
 	size_t index = World.size * gridPosition.y + gridPosition.x;
 	if (index >= World.size * World.size) {

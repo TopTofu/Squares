@@ -38,6 +38,7 @@ glm::vec3 getMousePickIntersection(GLFWwindow* window, Camera& camera, bool& hit
 	return camera.position + distance * ray;
 }
 
+
 std::vector<std::string> splitAt(std::string s, const char* c) {
 	std::vector<std::string> result = {};
 

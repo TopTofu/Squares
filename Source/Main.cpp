@@ -39,7 +39,7 @@ int main() {
 
 	initModelLoader(getShader("material").handle, glm::vec3(World.cellSize / 2.0f));
 
-	Light light = initLight({ 2.0f, 4.0f, 2.0f });
+	Light light = initLight({ 10.0f, 20.0f, 10.0f });
 
 	initDebugInterface(window);
 
