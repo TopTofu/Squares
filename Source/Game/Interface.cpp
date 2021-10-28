@@ -35,8 +35,9 @@ void initInterface(GLFWwindow* window, GLuint shader) {
 }
 
 
-void sampleCallback() {
-	printf("Hey, this worked!!\n");
+void sampleCallback(InterfaceElement* element) {
+	printf(element->id.c_str());
+	printf("\n");
 }
 
 
@@ -47,20 +48,49 @@ void initElements() {
 	InterfaceElement button;
 	button.clickable = true;
 	button.callback = sampleCallback;
+	button.id = "1";
 
 	button.p0 = { 50, 50,  0 };
-	button.p1 = { 150,  50,  0 };
-	button.p2 = { 150,  150,  0 };
-	button.p3 = { 50,  150,  0 };
+	button.p1 = { 120,  50,  0 };
+	button.p2 = { 120,  120,  0 };
+	button.p3 = { 50,  120,  0 };
 
 	button.mesh = getQuadMesh(button.p0, button.p1 - button.p0, button.p3 - button.p0, { 1.0, 0.5, 0.5, 0.8 });
+	button.mesh.vertices[0].uv = { 0,1 };
+	button.mesh.vertices[1].uv = { 1,1 };
+	button.mesh.vertices[2].uv = { 1,0 };
+	button.mesh.vertices[3].uv = { 0,0 };
+	bufferMesh(button.mesh);
 	button.mesh.shader = shader;
 
-	translateMeshBy(button.mesh, { 0, 500, 0 });
+	InterfaceElement button2;
+	button2 = button;
+	button2.id = "2";
+
+
+	InterfaceElement button3;
+	button3 = button;
+	button3.id = "3";
+
+	InterfaceElement button4;
+	button4 = button;
+	button4.id = "4";
+
+	button.mesh.texture = getTextureByName("sample");
+	button2.mesh.texture = getTextureByName("fish");
+	button3.mesh.texture = getTextureByName("some_texture");
+	//button4.mesh.texture = getTextureByName("Untitled");
+
+	translateMeshBy(button.mesh, { 0, 600, 0 });
+	translateMeshBy(button2.mesh, { 120, 600, 0 });
+	translateMeshBy(button3.mesh, { 240, 600, 0 });
+	translateMeshBy(button4.mesh, { 360, 600, 0 });
 
 	Interface.elements.push_back(button);
+	Interface.elements.push_back(button4);
+	Interface.elements.push_back(button2);
+	Interface.elements.push_back(button3);
 }
-
 
 void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
@@ -86,7 +116,7 @@ void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action,
 void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods) {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		if (Interface.hovering && Interface.hoveredElement->clickable) {
-			(Interface.hoveredElement->callback)();
+			(Interface.hoveredElement->callback)(Interface.hoveredElement);
 		}
 		else {
 			// @Temporary
@@ -122,7 +152,6 @@ void updateInterface(GLFWwindow* window, Camera& camera) {
 	}
 }
 
-
 void updateCellPicker(GLFWwindow* window, Camera& camera) {
 	bool hit;
 
@@ -131,7 +160,6 @@ void updateCellPicker(GLFWwindow* window, Camera& camera) {
 		pickCell(intersection);
 	}
 }
-
 
 InterfaceElement* getInterfaceElementAtScreenSpace(double x, double y, bool* found) {
 	glm::vec4 pixel = { getPixelCoords(x, y), 0, 1 };
@@ -186,6 +214,14 @@ void renderInterfaceElement(Mesh& mesh, Camera& camera) {
 	glDisable(GL_DEPTH_TEST);
 
 	glUseProgram(mesh.shader);
+	
+	if (mesh.texture != 0) {
+		glUniform1i(glGetUniformLocation(mesh.shader, "Textured"), 1);
+		glBindTexture(GL_TEXTURE_2D, mesh.texture->id);
+	}
+	else {
+		glUniform1i(glGetUniformLocation(mesh.shader, "Textured"), 0);
+	}
 
 	glBindVertexArray(mesh.vao);
 
@@ -207,6 +243,7 @@ void renderInterfaceElement(Mesh& mesh, Camera& camera) {
 
 	glUseProgram(0);
 	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glEnable(GL_DEPTH_TEST);
 }

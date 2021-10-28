@@ -2,10 +2,13 @@
 
 #include <Game/World.h>
 #include <Game/RoadNetwork.h>
+
 #include <Engine/Render.h>
 #include <Engine/ModelLoader.h>
 #include <Engine/Shader.h>
 #include <Engine/Camera.h>
+#include <Engine/Texture.h>
+
 #include <Util/Utilities.h>
 
 
@@ -19,13 +22,15 @@ struct CellPicker {
 
 struct InterfaceElement {
 	Mesh mesh;
-	void (*callback)();
+	void (*callback)(InterfaceElement*);
 	bool clickable;
 
 	glm::vec3 p0;
 	glm::vec3 p1;
 	glm::vec3 p2;
 	glm::vec3 p3;
+
+	std::string id;
 };
 
 
@@ -46,7 +51,7 @@ extern InterfaceInfo Interface;
 void initInterface(GLFWwindow* window, GLuint shader);
 void initElements();
 
-void sampleCallback();
+void sampleCallback(InterfaceElement* element);
 
 void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods);

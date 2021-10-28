@@ -10,8 +10,12 @@
 #include <string>
 #include <fstream>
 
+#include <Engine/Shader.h>
+#include <Engine/Texture.h>
 #include <Engine/Camera.h>
+
 #include <Util/Utilities.h>
+
 
 struct Vertex {
 	glm::vec3 position;
@@ -60,6 +64,8 @@ struct Mesh {
 
 	std::vector<Vertex> vertices;
 	std::vector<GLuint> indices;
+
+	Texture* texture = 0;
 
 	int primitive = GL_TRIANGLES;
 	GLuint vao;

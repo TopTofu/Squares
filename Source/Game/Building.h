@@ -4,10 +4,6 @@
 #include <Engine/Render.h>
 
 
-
-
-
-
 enum BuildingType{
 	NONE = 0,
 	ROAD = 1,

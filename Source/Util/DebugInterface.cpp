@@ -1,5 +1,4 @@
 #include <Util/DebugInterface.h>
-#include <Game\Interface.h>
 
 DebugInterface Debug;
 

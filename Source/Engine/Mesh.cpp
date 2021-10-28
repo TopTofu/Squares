@@ -1,7 +1,4 @@
 #include <Engine/Mesh.h>
-#include <Game/World.h>
-#include <Engine\Shader.h>
-
 
 Mesh getQuadMesh(glm::vec3 origin, glm::vec3 s0, glm::vec3 s1, glm::vec4 color, bool buffer) {
 	Mesh mesh;
@@ -539,6 +536,9 @@ float streetWidthRatio = 1.0f / 2.0f;
 float curbWidthRatio = 0.15f;
 float curbHeightRatio = 0.03f;
 
+float cellsize = 1.0f;
+
+
 Model getStraightStreet() {
 	Mesh curbLeft;
 	Mesh curbRight;
@@ -554,16 +554,16 @@ Model getStraightStreet() {
 
 	{
 		Vertex v0;
-		v0.position = { World.cellSize * streetWidthRatio * 0.5f, 0.01f,  -World.cellSize * 0.5f };
+		v0.position = { cellsize * streetWidthRatio * 0.5f, 0.01f,  -cellsize * 0.5f };
 		v0.normal = { 0,1,0 };
 		Vertex v1;
-		v1.position = { World.cellSize * streetWidthRatio * 0.5f + 0.05f, 0.01f,  -World.cellSize * 0.5f };
+		v1.position = { cellsize * streetWidthRatio * 0.5f + 0.05f, 0.01f,  -cellsize * 0.5f };
 		v1.normal = { 0,1,0 };
 		Vertex v2;
-		v2.position = { World.cellSize * streetWidthRatio * 0.5f + 0.05f, 0.01f, World.cellSize * 0.5f };
+		v2.position = { cellsize * streetWidthRatio * 0.5f + 0.05f, 0.01f, cellsize * 0.5f };
 		v2.normal = { 0,1,0 };
 		Vertex v3;
-		v3.position = { World.cellSize * streetWidthRatio * 0.5f, 0.01f, World.cellSize * 0.5f };
+		v3.position = { cellsize * streetWidthRatio * 0.5f, 0.01f, cellsize * 0.5f };
 		v3.normal = { 0,1,0 };
 
 		curbLeft.vertices.push_back(v0);
@@ -577,22 +577,22 @@ Model getStraightStreet() {
 
 	curbRight = curbLeft;
 
-	translateMeshBy(curbRight, { -World.cellSize * streetWidthRatio - 0.05f, 0, 0 });
+	translateMeshBy(curbRight, { -cellsize * streetWidthRatio - 0.05f, 0, 0 });
 
 	Mesh road;
 
 	{
 		Vertex v0;
-		v0.position = { World.cellSize * streetWidthRatio * 0.5f, 0.01f,  -World.cellSize * 0.5f };
+		v0.position = { cellsize * streetWidthRatio * 0.5f, 0.01f,  -cellsize * 0.5f };
 		v0.normal = { 0,1,0 };
 		Vertex v1;
-		v1.position = { World.cellSize * streetWidthRatio * 0.5f, 0.01f,  World.cellSize * 0.5f };
+		v1.position = { cellsize * streetWidthRatio * 0.5f, 0.01f,  cellsize * 0.5f };
 		v1.normal = { 0,1,0 };
 		Vertex v2;
-		v2.position = { -World.cellSize * streetWidthRatio * 0.5f, 0.01f, World.cellSize * 0.5f };
+		v2.position = { -cellsize * streetWidthRatio * 0.5f, 0.01f, cellsize * 0.5f };
 		v2.normal = { 0,1,0 };
 		Vertex v3;
-		v3.position = { -World.cellSize * streetWidthRatio * 0.5f, 0.01f, -World.cellSize * 0.5f };
+		v3.position = { -cellsize * streetWidthRatio * 0.5f, 0.01f, -cellsize * 0.5f };
 		v3.normal = { 0,1,0 };
 
 		road.vertices.push_back(v0);
@@ -624,7 +624,7 @@ Model getStraightStreet() {
 
 
 Model getCurvedStreet() {
-	float r = streetWidthRatio * World.cellSize;
+	float r = streetWidthRatio * cellsize;
 	int numSegments = 40; // segements for full circle
 
 	Mesh curbLeft;
@@ -692,8 +692,8 @@ Model getCurvedStreet() {
 		}
 	}
 
-	curbLeft.vertices.push_back(Vertex{ { -World.cellSize * 0.5f, 0.01f, World.cellSize * streetWidthRatio * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
-	curbLeft.vertices.push_back(Vertex{ { -World.cellSize * 0.5f, 0.01f, World.cellSize * streetWidthRatio * 0.5f + 0.05f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	curbLeft.vertices.push_back(Vertex{ { -cellsize * 0.5f, 0.01f, cellsize * streetWidthRatio * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	curbLeft.vertices.push_back(Vertex{ { -cellsize * 0.5f, 0.01f, cellsize * streetWidthRatio * 0.5f + 0.05f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
 	size_t offset = curbLeft.vertices.size() - 1;
 
 	curbLeft.indices.push_back(offset - 1);
@@ -704,8 +704,8 @@ Model getCurvedStreet() {
 	curbLeft.indices.push_back(last - 1);
 	curbLeft.indices.push_back(last);
 
-	curbLeft.vertices.push_back(Vertex{ { World.cellSize * streetWidthRatio * 0.5f, 0.01f, -World.cellSize * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
-	curbLeft.vertices.push_back(Vertex{ { World.cellSize * streetWidthRatio * 0.5f + 0.05f, 0.01f, -World.cellSize * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	curbLeft.vertices.push_back(Vertex{ { cellsize * streetWidthRatio * 0.5f, 0.01f, -cellsize * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	curbLeft.vertices.push_back(Vertex{ { cellsize * streetWidthRatio * 0.5f + 0.05f, 0.01f, -cellsize * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
 	offset = curbLeft.vertices.size() - 1;
 
 	curbLeft.indices.push_back(offset - 1);
@@ -771,9 +771,9 @@ Model getCurvedStreet() {
 
 	offset = road.vertices.size() - 1;
 
-	road.vertices.push_back(Vertex{ { -World.cellSize * 0.5f, 0.01f, -World.cellSize * streetWidthRatio * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
-	road.vertices.push_back(Vertex{ { -World.cellSize * 0.5f, 0.01f, World.cellSize * streetWidthRatio * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
-	road.vertices.push_back(Vertex{ { -World.cellSize * 0.25f, 0.01f,  World.cellSize * streetWidthRatio * 0.5}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	road.vertices.push_back(Vertex{ { -cellsize * 0.5f, 0.01f, -cellsize * streetWidthRatio * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	road.vertices.push_back(Vertex{ { -cellsize * 0.5f, 0.01f, cellsize * streetWidthRatio * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	road.vertices.push_back(Vertex{ { -cellsize * 0.25f, 0.01f,  cellsize * streetWidthRatio * 0.5}, {0,0}, {1,1,1,1}, {0, 1, 0} });
 
 	road.indices.push_back(offset + 1);
 	road.indices.push_back(offset + 2);
@@ -781,9 +781,9 @@ Model getCurvedStreet() {
 
 	offset = road.vertices.size() - 1;
 
-	road.vertices.push_back(Vertex{ { -World.cellSize * streetWidthRatio * 0.5f, 0.01f, -World.cellSize * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
-	road.vertices.push_back(Vertex{ { World.cellSize * streetWidthRatio * 0.5f, 0.01f, -World.cellSize * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
-	road.vertices.push_back(Vertex{ { World.cellSize * streetWidthRatio * 0.5, 0.01f,  -World.cellSize * 0.25f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	road.vertices.push_back(Vertex{ { -cellsize * streetWidthRatio * 0.5f, 0.01f, -cellsize * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	road.vertices.push_back(Vertex{ { cellsize * streetWidthRatio * 0.5f, 0.01f, -cellsize * 0.5f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
+	road.vertices.push_back(Vertex{ { cellsize * streetWidthRatio * 0.5, 0.01f,  -cellsize * 0.25f}, {0,0}, {1,1,1,1}, {0, 1, 0} });
 
 	road.indices.push_back(offset + 1);
 	road.indices.push_back(offset + 2);
@@ -816,16 +816,16 @@ Model getTJunction() {
 
 	{
 		Vertex v0;
-		v0.position = { -World.cellSize * streetWidthRatio * 0.5f, 0.01f, -World.cellSize * 0.5f };
+		v0.position = { -cellsize * streetWidthRatio * 0.5f, 0.01f, -cellsize * 0.5f };
 		v0.normal = { 0,1,0 };
 		Vertex v1;
-		v1.position = { -World.cellSize * streetWidthRatio * 0.5f, 0.01f, World.cellSize * 0.5f };
+		v1.position = { -cellsize * streetWidthRatio * 0.5f, 0.01f, cellsize * 0.5f };
 		v1.normal = { 0,1,0 };
 		Vertex v2;
-		v2.position = { -World.cellSize * streetWidthRatio * 0.5f - 0.05f, 0.01f, World.cellSize * 0.5f };
+		v2.position = { -cellsize * streetWidthRatio * 0.5f - 0.05f, 0.01f, cellsize * 0.5f };
 		v2.normal = { 0,1,0 };
 		Vertex v3;
-		v3.position = { -World.cellSize * streetWidthRatio * 0.5f - 0.05f, 0.01f, -World.cellSize * 0.5f };
+		v3.position = { -cellsize * streetWidthRatio * 0.5f - 0.05f, 0.01f, -cellsize * 0.5f };
 		v3.normal = { 0,1,0 };
 
 		curbTop.vertices.push_back(v0);
@@ -844,7 +844,7 @@ Model getTJunction() {
 
 
 	int numSegments = 40; // for full circle
-	float r = streetWidthRatio * World.cellSize;
+	float r = streetWidthRatio * cellsize;
 
 	{
 		for (int i = 0; i < numSegments; i++) {
@@ -920,7 +920,7 @@ Model getXJunction() {
 	Mesh curb3;
 
 	int numSegments = 40; // for full circle
-	float r = streetWidthRatio * World.cellSize;
+	float r = streetWidthRatio * cellsize;
 
 	{
 		for (int i = 0; i < numSegments; i++) {
@@ -987,7 +987,7 @@ Model getRoadEnd() {
 	Mesh rightCurb;
 	
 	int numSegments = 40;
-	float r = streetWidthRatio * World.cellSize * 0.5f;
+	float r = streetWidthRatio * cellsize * 0.5f;
 
 	{
 		for (int i = 0; i < numSegments; i++) {

@@ -1,32 +1,28 @@
 #include <iostream>
 
+#include <glad/glad.h>
+
 #include <Engine/Window.h>
 #include <Engine/Render.h>
 #include <Engine/Shader.h>
 #include <Engine/Light.h>
 #include <Engine/Controls.h>
+#include <Engine/ModelLoader.h>
+
 #include <Util/Common.h>
+#include <Util/DebugInterface.h>
+
 #include <Game/World.h>
 #include <Game/Interface.h>
-#include <Engine/ModelLoader.h>
-#include <Util/DebugInterface.h>
 #include <Game/RoadNetwork.h>
 
 
 int main() {
-
 	GLFWwindow* window = initWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
 	initOpenGL(window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	/*GLuint vertShader = compileShader("./Resources/Shader/default.vert");
-	GLuint fragShader = compileShader("./Resources/Shader/default.frag");
-	GLuint shader = createProgram(vertShader, fragShader);
-
-	GLuint matVert = compileShader("./Resources/Shader/material.vert");
-	GLuint matFrag = compileShader("./Resources/Shader/material.frag");
-	GLuint matShader = createProgram(matVert, matFrag);*/
-
 	loadShaders();
+	loadTextures();
 
 	Camera camera = initCamera(glm::vec3(-1.0f, 4.0f, -1.0f), WINDOW_WIDTH, WINDOW_HEIGHT);
 	cameraRotateY(camera, 135);
