@@ -26,6 +26,7 @@ Camera initCamera(glm::vec3 position, int width, int height);
 glm::mat4 getViewMatrix(Camera& camera);
 glm::mat4 getProjectionMatrix(int width, int height);
 glm::mat4 getCameraMatrix(Camera& camera);
+glm::mat4 getOrthogonalMatrix();
 
 void cameraRotateX(Camera& camera, float degrees, bool limit = true);
 void cameraRotateY(Camera& camera, float degrees);

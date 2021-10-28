@@ -1,6 +1,5 @@
 #include <Game/Interface.h>
-#include <Game\RoadNetwork.h>
-#include <Engine\Shader.h>
+
 
 InterfaceInfo Interface;
 
@@ -44,20 +43,20 @@ void sampleCallback() {
 void initElements() {
 	GLuint shader = getShader("interface").handle;
 
-	// sample button
+	// @Temporary
 	InterfaceElement button;
 	button.clickable = true;
 	button.callback = sampleCallback;
 
-	button.p0 = { 0,0,0 };
-	button.p1 = { 0.5,0,0 };
-	button.p2 = { 0.5,0.5,0 };
-	button.p3 = { 0,0.5,0 };
+	button.p0 = { 50, 50,  0 };
+	button.p1 = { 150,  50,  0 };
+	button.p2 = { 150,  150,  0 };
+	button.p3 = { 50,  150,  0 };
 
-	button.mesh = getQuadMesh(button.p0, button.p1, button.p3, { 1.0, 0.5, 0.5, 0.5 });
+	button.mesh = getQuadMesh(button.p0, button.p1 - button.p0, button.p3 - button.p0, { 1.0, 0.5, 0.5, 0.8 });
 	button.mesh.shader = shader;
 
-
+	translateMeshBy(button.mesh, { 0, 500, 0 });
 
 	Interface.elements.push_back(button);
 }
@@ -86,7 +85,7 @@ void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action,
 
 void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods) {
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		if (Interface.hovering) {
+		if (Interface.hovering && Interface.hoveredElement->clickable) {
 			(Interface.hoveredElement->callback)();
 		}
 		else {
@@ -106,13 +105,6 @@ void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods
 }
 
 void updateInterface(GLFWwindow* window, Camera& camera) {
-	updateCellPicker(window, camera);
-}
-
-
-void updateCellPicker(GLFWwindow* window, Camera& camera) {
-	bool hit;
-
 	double mouseX, mouseY;
 	glfwGetCursorPos(window, &mouseX, &mouseY);
 	glm::vec2 deviceCoords = getNormalizedDeviceCoords(mouseX, mouseY);
@@ -126,18 +118,33 @@ void updateCellPicker(GLFWwindow* window, Camera& camera) {
 	}
 	else {
 		Interface.hovering = false;
+		updateCellPicker(window, camera);
+	}
+}
 
-		glm::vec3 intersection = getMousePickIntersection(window, camera, hit);
-		if (hit) {
-			pickCell(intersection);
-		}
+
+void updateCellPicker(GLFWwindow* window, Camera& camera) {
+	bool hit;
+
+	glm::vec3 intersection = getMousePickIntersection(window, camera, hit);
+	if (hit) {
+		pickCell(intersection);
 	}
 }
 
 
 InterfaceElement* getInterfaceElementAtScreenSpace(double x, double y, bool* found) {
+	glm::vec4 pixel = { getPixelCoords(x, y), 0, 1 };
+
 	for (InterfaceElement& element : Interface.elements) {
-		if (x > element.p0.x && x < element.p2.x && y > element.p0.y && y < element.p2.y) {
+		// @Temporary this only works on quads
+		// @Temporary does not yet support scale and rotation of elements
+
+		// apply the inverse translation of the element to the cursor coords
+		glm::mat4 transl = glm::mat4(1.0f);
+		transl = glm::translate(transl, -element.mesh.translation);
+		glm::vec4 temp = transl * pixel;
+		if (element.p0.x <= temp.x && element.p1.x >= temp.x && element.p0.y <= temp.y && element.p3.y >= temp.y) {
 			*found = true;
 			return &element;
 		}
@@ -154,7 +161,7 @@ void renderInterface(Camera& camera) {
 		renderModel(Interface.cellPicker.stuckObject, camera);
 
 	for (InterfaceElement& element : Interface.elements) {
-		renderInterfaceElement(element.mesh);
+		renderInterfaceElement(element.mesh, camera);
 	}
 }
 
@@ -175,10 +182,15 @@ void rotatePicker(float degrees) {
 }
 
 
-void renderInterfaceElement(Mesh mesh) {
+void renderInterfaceElement(Mesh& mesh, Camera& camera) {
+	glDisable(GL_DEPTH_TEST);
+
 	glUseProgram(mesh.shader);
 
 	glBindVertexArray(mesh.vao);
+
+	glm::mat4 ortho = getOrthogonalMatrix();
+	glUniformMatrix4fv(glGetUniformLocation(mesh.shader, "ortho"), 1, GL_FALSE, glm::value_ptr(ortho));
 
 	glm::mat4 transl = glm::mat4(1.0f);
 	glm::mat4 rot = glm::mat4(1.0f);
@@ -195,4 +207,6 @@ void renderInterfaceElement(Mesh mesh) {
 
 	glUseProgram(0);
 	glBindVertexArray(0);
+
+	glEnable(GL_DEPTH_TEST);
 }

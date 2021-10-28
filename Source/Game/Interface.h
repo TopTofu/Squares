@@ -1,9 +1,12 @@
 #pragma once
 
 #include <Game/World.h>
+#include <Game/RoadNetwork.h>
 #include <Engine/Render.h>
-#include <Util/Utilities.h>
 #include <Engine/ModelLoader.h>
+#include <Engine/Shader.h>
+#include <Engine/Camera.h>
+#include <Util/Utilities.h>
 
 
 struct CellPicker {
@@ -49,7 +52,7 @@ void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action,
 void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods);
 
 void renderInterface(Camera& camera);
-void renderInterfaceElement(Mesh mesh);
+void renderInterfaceElement(Mesh& mesh, Camera& camera);
 
 void updateInterface(GLFWwindow* window, Camera& camera);
 

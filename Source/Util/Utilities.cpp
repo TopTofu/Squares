@@ -8,6 +8,13 @@ glm::vec2 getNormalizedDeviceCoords(float mouseX, float mouseY) {
 	return glm::vec2(x, y);
 }
 
+glm::vec2 getPixelCoords(float normalizedX, float normalizedY) {
+	float x = (normalizedX + 1.0f) * 0.5f * WINDOW_WIDTH;
+	float y = (1.0f - normalizedY) * 0.5f * WINDOW_HEIGHT;
+
+	return glm::vec2(x, y);
+}
+
 glm::vec3 getMousePickIntersection(GLFWwindow* window, Camera& camera, bool& hit) {
 	double mouseX, mouseY;
 	hit = true;

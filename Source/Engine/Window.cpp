@@ -1,5 +1,4 @@
 #include <Engine/Window.h>
-#include <GLFW/glfw3.h>
 
 GLFWwindow* initWindow(int width, int height) {
 	glfwInit();
@@ -10,6 +9,7 @@ GLFWwindow* initWindow(int width, int height) {
 
 	glfwWindowHint(GLFW_SAMPLES, 8);
 
+
 	GLFWwindow* window = glfwCreateWindow(width, height, "Squares", NULL, NULL);
 
 	if (window == NULL) {
@@ -17,4 +17,11 @@ GLFWwindow* initWindow(int width, int height) {
 		glfwTerminate();
 		return NULL;
 	}
+
+	//glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+}
+
+
+void framebufferResizeCallback(GLFWwindow* window, int width, int height) {
+	glViewport(0, 0, width, height);
 }

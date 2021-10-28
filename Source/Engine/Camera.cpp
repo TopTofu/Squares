@@ -38,3 +38,7 @@ void cameraRotateX(Camera& camera, float degrees, bool limit) {
 void cameraRotateY(Camera& camera, float degrees) {
 	camera.orientation = glm::rotate(camera.orientation, glm::radians(-degrees), camera.up);
 }
+
+glm::mat4 getOrthogonalMatrix() {
+	return glm::ortho<float>(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0, -1, 1);
+}

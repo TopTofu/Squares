@@ -6,3 +6,4 @@
 
 
 GLFWwindow* initWindow(int width, int height);
+void framebufferResizeCallback(GLFWwindow* window, int width, int height);
