@@ -10,6 +10,10 @@ std::string texturePaths[] = {
 	"./Resources/Textures/fish.jpg",
 	"./Resources/Textures/some_texture.jpg",
 	"./Resources/Textures/Untitled.jpg",
+	"./Resources/Textures/Splash/house02.jpg",
+	"./Resources/Textures/Splash/house03.png",
+	"./Resources/Textures/Splash/house04.png",
+	"./Resources/Textures/Splash/road.jpg",
 };
 
 

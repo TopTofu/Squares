@@ -55,9 +55,10 @@ void addRoad(glm::vec2 gridPosition) {
 void updateRoadMeshInCell(glm::vec2 gridPosition) {
 	size_t index = World.size * gridPosition.y + gridPosition.x;
 	if (index >= World.size * World.size) {
-		printf("Exceeded Word.grid index\n");
+		printf("Exceeded Wolrd.grid index\n");
 		return;
 	}
+	
 	int road = RoadNetwork.roads[index];
 
 	Model model;
@@ -65,7 +66,7 @@ void updateRoadMeshInCell(glm::vec2 gridPosition) {
 
 	{
 		if (!(road & 1)) {
-			removeBuilding(gridPosition);
+			//removeBuilding(gridPosition);
 			return;
 		}
 

@@ -36,8 +36,22 @@ void initInterface(GLFWwindow* window, GLuint shader) {
 
 
 void sampleCallback(InterfaceElement* element) {
-	printf(element->id.c_str());
-	printf("\n");
+	if (element->id == "1") {
+		Model m = getModelFromLoader("house02");
+		stickModelToPicker(m, PickerMode::BUILDING);
+	}
+	if (element->id == "2") {
+		Model m = getModelFromLoader("house03");
+		stickModelToPicker(m, PickerMode::BUILDING);
+	}
+	if (element->id == "3") {
+		Model m = getModelFromLoader("house04");
+		stickModelToPicker(m, PickerMode::BUILDING);
+	}
+	if (element->id == "4") {
+		unstuckModelFromPicker();
+		Interface.cellPicker.mode = PickerMode::ROAD;
+	}
 }
 
 
@@ -76,10 +90,10 @@ void initElements() {
 	button4 = button;
 	button4.id = "4";
 
-	button.mesh.texture = getTextureByName("sample");
-	button2.mesh.texture = getTextureByName("fish");
-	button3.mesh.texture = getTextureByName("some_texture");
-	//button4.mesh.texture = getTextureByName("Untitled");
+	button.mesh.texture = getTextureByName("house02");
+	button2.mesh.texture = getTextureByName("house03");
+	button3.mesh.texture = getTextureByName("house04");
+	button4.mesh.texture = getTextureByName("road");
 
 	translateMeshBy(button.mesh, { 0, 600, 0 });
 	translateMeshBy(button2.mesh, { 120, 600, 0 });
@@ -95,15 +109,15 @@ void initElements() {
 void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
 		Model m = getModelFromLoader("house02");
-		stickModelToPicker(m);
+		stickModelToPicker(m, PickerMode::BUILDING);
 	}
 	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
 		Model m = getModelFromLoader("house03");
-		stickModelToPicker(m);
+		stickModelToPicker(m, PickerMode::BUILDING);
 	}
 	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
 		Model m = getModelFromLoader("house04");
-		stickModelToPicker(m);
+		stickModelToPicker(m, PickerMode::BUILDING);
 	}
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		unstuckModelFromPicker();
@@ -120,16 +134,20 @@ void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods
 		}
 		else {
 			// @Temporary
+			if (Interface.cellPicker.mode == PickerMode::EMPTY) return;
 			Cell* cell = cellAtWorldCoords(Interface.cellPicker.baseMesh.translation);
-			if (!cell->occupied)
+			if (cell->occupied)
 			{
+				return;
+			}
+			if (Interface.cellPicker.mode == PickerMode::BUILDING) {
+				Building b;
+				b.model = Interface.cellPicker.stuckObject;
+				placeBuilding(b, Interface.cellPicker.baseMesh.translation);
+			}
+			else if (Interface.cellPicker.mode == PickerMode::ROAD) {
 				addRoad(cell->gridPosition);
 			}
-			/*if (Interface.cellPicker.stuck) {
-			Building b;
-			b.model = Interface.cellPicker.stuckObject;
-			placeBuilding(b, Interface.cellPicker.baseMesh.translation);
-			}*/
 		}
 	}
 }
@@ -182,10 +200,9 @@ InterfaceElement* getInterfaceElementAtScreenSpace(double x, double y, bool* fou
 	return {};
 }
 
-
 void renderInterface(Camera& camera) {
 	renderMesh(Interface.cellPicker.baseMesh, camera);
-	if (Interface.cellPicker.stuck)
+	if (Interface.cellPicker.mode == PickerMode::BUILDING) // @Temporary may need to add more mode specific rendering
 		renderModel(Interface.cellPicker.stuckObject, camera);
 
 	for (InterfaceElement& element : Interface.elements) {
@@ -194,15 +211,15 @@ void renderInterface(Camera& camera) {
 }
 
 
-void stickModelToPicker(Model& model) {
+void stickModelToPicker(Model& model, PickerMode mode) {
 	Interface.cellPicker.stuckObject = model;
-	Interface.cellPicker.stuck = true;
+	Interface.cellPicker.mode = mode;
 }
 
 
 void unstuckModelFromPicker() {
 	Interface.cellPicker.stuckObject = {};
-	Interface.cellPicker.stuck = false;
+	Interface.cellPicker.mode = PickerMode::EMPTY;
 }
 
 void rotatePicker(float degrees) {

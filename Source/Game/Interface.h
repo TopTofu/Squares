@@ -12,13 +12,18 @@
 #include <Util/Utilities.h>
 
 
+enum class PickerMode {
+	EMPTY = 0,
+	BUILDING = 1,
+	ROAD = 2
+};
+
 struct CellPicker {
 	Model stuckObject;
 	Mesh baseMesh;
 
-	bool stuck = false;
+	PickerMode mode = PickerMode::EMPTY;
 };
-
 
 struct InterfaceElement {
 	Mesh mesh;
@@ -64,7 +69,7 @@ void updateInterface(GLFWwindow* window, Camera& camera);
 void updateCellPicker(GLFWwindow* window, Camera& camera);
 void pickCell(glm::vec3 worldCoords);
 
-void stickModelToPicker(Model& model);
+void stickModelToPicker(Model& model, PickerMode mode);
 void unstuckModelFromPicker();
 
 void rotatePicker(float degrees);
