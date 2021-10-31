@@ -6,10 +6,9 @@
 TextureLoaderInfo TextureLoader;
 
 std::string texturePaths[] = {
-	"./Resources/Textures/sample.jpg",
-	"./Resources/Textures/fish.jpg",
-	"./Resources/Textures/some_texture.jpg",
-	"./Resources/Textures/Untitled.jpg",
+	"./Resources/Textures/alphaBMP.bmp",
+	"./Resources/Textures/alphaJPG.jpg",
+	"./Resources/Textures/alphaPNG.png",
 	"./Resources/Textures/Splash/house02.jpg",
 	"./Resources/Textures/Splash/house03.png",
 	"./Resources/Textures/Splash/house04.png",
@@ -40,7 +39,7 @@ void loadTextures() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		if (c == 4) {
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		}
 		else if (c == 3) {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, data);

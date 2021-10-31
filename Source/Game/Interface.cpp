@@ -49,8 +49,8 @@ void sampleCallback(InterfaceElement* element) {
 		stickModelToPicker(m, PickerMode::BUILDING);
 	}
 	if (element->id == "4") {
-		unstuckModelFromPicker();
-		Interface.cellPicker.mode = PickerMode::ROAD;
+		Model m = getRoadEnd();
+		stickModelToPicker(m, PickerMode::ROAD);
 	}
 }
 
@@ -90,10 +90,10 @@ void initElements() {
 	button4 = button;
 	button4.id = "4";
 
-	button.mesh.texture = getTextureByName("house02");
-	button2.mesh.texture = getTextureByName("house03");
-	button3.mesh.texture = getTextureByName("house04");
-	button4.mesh.texture = getTextureByName("road");
+	button.mesh.texture = getTextureByName("alphaBMP");
+	button2.mesh.texture = getTextureByName("alphaJPG");
+	button3.mesh.texture = getTextureByName("alphaPNG");
+	button4.mesh.texture = getTextureByName("house02");
 
 	translateMeshBy(button.mesh, { 0, 600, 0 });
 	translateMeshBy(button2.mesh, { 120, 600, 0 });
@@ -119,6 +119,10 @@ void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action,
 		Model m = getModelFromLoader("house04");
 		stickModelToPicker(m, PickerMode::BUILDING);
 	}
+	if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
+		Model m = getRoadEnd();
+		stickModelToPicker(m, PickerMode::ROAD);
+	}
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		unstuckModelFromPicker();
 	}
@@ -133,7 +137,6 @@ void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods
 			(Interface.hoveredElement->callback)(Interface.hoveredElement);
 		}
 		else {
-			// @Temporary
 			if (Interface.cellPicker.mode == PickerMode::EMPTY) return;
 			Cell* cell = cellAtWorldCoords(Interface.cellPicker.baseMesh.translation);
 			if (cell->occupied)
@@ -149,6 +152,9 @@ void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods
 				addRoad(cell->gridPosition);
 			}
 		}
+	}
+	if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) {
+		rotatePicker(90.0f);
 	}
 }
 
@@ -202,7 +208,7 @@ InterfaceElement* getInterfaceElementAtScreenSpace(double x, double y, bool* fou
 
 void renderInterface(Camera& camera) {
 	renderMesh(Interface.cellPicker.baseMesh, camera);
-	if (Interface.cellPicker.mode == PickerMode::BUILDING) // @Temporary may need to add more mode specific rendering
+	if (Interface.cellPicker.mode != PickerMode::EMPTY) // @Temporary may need to add more mode specific rendering
 		renderModel(Interface.cellPicker.stuckObject, camera);
 
 	for (InterfaceElement& element : Interface.elements) {
@@ -210,12 +216,10 @@ void renderInterface(Camera& camera) {
 	}
 }
 
-
 void stickModelToPicker(Model& model, PickerMode mode) {
 	Interface.cellPicker.stuckObject = model;
 	Interface.cellPicker.mode = mode;
 }
-
 
 void unstuckModelFromPicker() {
 	Interface.cellPicker.stuckObject = {};
@@ -225,7 +229,6 @@ void unstuckModelFromPicker() {
 void rotatePicker(float degrees) {
 	Interface.cellPicker.stuckObject.rotation = glm::rotate(Interface.cellPicker.stuckObject.rotation, glm::radians(degrees), { 0, 1, 0 });
 }
-
 
 void renderInterfaceElement(Mesh& mesh, Camera& camera) {
 	glDisable(GL_DEPTH_TEST);
