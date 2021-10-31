@@ -8,20 +8,32 @@ void initWorld(glm::vec3 dimensions, float cellSize, GLuint shader) {
 		return;
 	}
 
+	World.dimensions = dimensions;
+	World.cellSize = cellSize;
+
 	for (int z = 0; z < dimensions.z; z++) {
 		for (int y = 0; y < dimensions.y; y++) {
 			for (int x = 0; x < dimensions.x; x++) {
 				Cell c;
 				c.gridPosition = { x, y, z };
-				c.worldPosition = { x * cellSize, 0, y * cellSize };
+				c.worldPosition = { x * cellSize, z * cellSize, y * cellSize };
 
 				World.grid.push_back(c);
 			}
 		}
 	}
 
-	World.dimensions = dimensions;
-	World.cellSize = cellSize;
+	for (int z = 0; z < dimensions.z; z++) {
+		for (int y = 0; y < dimensions.y; y++) {
+			for (int x = 0; x < dimensions.x; x++) {
+				Cell* c = &World.grid[gridIndex({ x, y, z })];
+				if (z > 0)
+					c->below = &World.grid[gridIndex({ x, y, z - 1 })];
+				if (z < dimensions.z - 1)
+					c->above = &World.grid[gridIndex({ x, y, z + 1 })];
+			}
+		}
+	}
 
 	World.mesh = getQuadMesh({ 0, 0, 0 }, { cellSize * dimensions.x, 0, 0 }, { 0, 0, cellSize * dimensions.y }, { 0.09f, 0.34f, 0.23f, 1.0f });
 	World.mesh.shader = shader;
@@ -47,7 +59,7 @@ Cell* cellAtWorldCoords(glm::vec3 coords) {
 	gridX = std::clamp(gridX, 0, (int)World.dimensions.x - 1);
 	gridY = std::clamp(gridY, 0, (int)World.dimensions.y - 1);
 	gridZ = std::clamp(gridZ, 0, (int)World.dimensions.z - 1);
-	int index = gridIndex({gridX, gridY, gridZ});
+	int index = gridIndex({ gridX, gridY, gridZ });
 
 	Cell* c = &World.grid[index];
 	return c;
@@ -83,5 +95,5 @@ void removeBuildingAtWorldCoords(glm::vec3 worldCoords) {
 }
 
 int gridIndex(glm::vec3 gridCoords) {
-	return gridCoords.x + gridCoords.y * World.dimensions.y + gridCoords.z * World.dimensions.y * World.dimensions.z;
+	return gridCoords.x + gridCoords.y * World.dimensions.x + gridCoords.z * World.dimensions.x * World.dimensions.y;
 }

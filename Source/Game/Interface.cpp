@@ -10,7 +10,6 @@ void pickCell(glm::vec3 worldCoords) {
 	Interface.cellPicker.stuckObject.translation = c->worldPosition + glm::vec3(World.cellSize * 0.5f, 0.0f, World.cellSize * 0.5f);
 }
 
-
 void initInterface(GLFWwindow* window, GLuint shader) {
 	if (Interface.initialized) {
 		printf("Interface has already been initialized!");
@@ -34,7 +33,6 @@ void initInterface(GLFWwindow* window, GLuint shader) {
 	initElements();
 }
 
-
 void sampleCallback(InterfaceElement* element) {
 	if (element->id == "1") {
 		Model m = getModelFromLoader("house02");
@@ -53,7 +51,6 @@ void sampleCallback(InterfaceElement* element) {
 		stickModelToPicker(m, PickerMode::ROAD);
 	}
 }
-
 
 void initElements() {
 	GLuint shader = getShader("interface").handle;
@@ -219,6 +216,7 @@ void renderInterface(Camera& camera) {
 void stickModelToPicker(Model& model, PickerMode mode) {
 	Interface.cellPicker.stuckObject = model;
 	Interface.cellPicker.mode = mode;
+	Interface.cellPicker.stuckObject.translation = Interface.cellPicker.baseMesh.translation + glm::vec3(World.cellSize * 0.5f, 0.0f, World.cellSize * 0.5f);
 }
 
 void unstuckModelFromPicker() {
