@@ -146,7 +146,7 @@ void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods
 			if (Interface.cellPicker.mode == PickerMode::BUILDING) {
 				Building b;
 				b.model = Interface.cellPicker.stuckObject;
-				placeBuilding(b, Interface.cellPicker.baseMesh.translation);
+				placeBuildingAtWorldCoords(b, Interface.cellPicker.baseMesh.translation);
 			}
 			else if (Interface.cellPicker.mode == PickerMode::ROAD) {
 				addRoad(cell->gridPosition);

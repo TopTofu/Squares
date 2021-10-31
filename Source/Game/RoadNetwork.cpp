@@ -1,5 +1,4 @@
 #include <Game/RoadNetwork.h>
-#include <Game/World.h>
 
 RoadNetworkInfo RoadNetwork;
 
@@ -12,23 +11,22 @@ void initRoadNetwork() {
 	}
 }
 
-void addRoad(glm::vec2 gridPosition) {
-	size_t index = World.size * gridPosition.y + gridPosition.x;
-	size_t maxIndex = World.size * World.size;
+void addRoad(glm::vec3 gridPosition) {
+	size_t index = gridIndex(gridPosition);
 
 	bool north = 0;
 	bool east = 0;
 	bool south = 0;
 	bool west = 0;
 
-	if (gridPosition.x < World.size - 1) {
+	if (gridPosition.x < World.dimensions.x - 1) {
 		north = (int)RoadNetwork.roads[index + 1] & 1;
 		RoadNetwork.roads[index + 1] |= 1 << 3; // northern cell now knows that its southern is placed
 	}
 
-	if (gridPosition.y < World.size - 1) {
-		east = (int)RoadNetwork.roads[index + World.size] & 1;
-		RoadNetwork.roads[index + World.size] |= 1 << 4;
+	if (gridPosition.y < World.dimensions.y - 1) {
+		east = (int)RoadNetwork.roads[index + World.dimensions.y] & 1;
+		RoadNetwork.roads[index + World.dimensions.y] |= 1 << 4;
 	}
 
 	if (gridPosition.x > 0) {
@@ -37,28 +35,29 @@ void addRoad(glm::vec2 gridPosition) {
 	}
 
 	if (gridPosition.y > 0) {
-		west = (int)RoadNetwork.roads[index - World.size] & 1;
-		RoadNetwork.roads[index - World.size] |= 1 << 2;
+		west = (int)RoadNetwork.roads[index - World.dimensions.y] & 1;
+		RoadNetwork.roads[index - World.dimensions.y] |= 1 << 2;
 	}
 
 	RoadNetwork.roads[index] = 1 + (north << 1) + (east << 2) + (south << 3) + (west << 4);
 	updateRoadMeshInCell(gridPosition);
 
-	updateRoadMeshInCell({ gridPosition.x, gridPosition.y + 1 }); // north
-	updateRoadMeshInCell({ gridPosition.x + 1, gridPosition.y }); // east
-	updateRoadMeshInCell({ gridPosition.x, gridPosition.y - 1 }); // south
-	updateRoadMeshInCell({ gridPosition.x - 1, gridPosition.y }); // west
+	updateRoadMeshInCell({ gridPosition.x,     gridPosition.y + 1, 0 }); // north
+	updateRoadMeshInCell({ gridPosition.x + 1, gridPosition.y,     0 }); // east
+	updateRoadMeshInCell({ gridPosition.x,	   gridPosition.y - 1, 0 }); // south
+	updateRoadMeshInCell({ gridPosition.x - 1, gridPosition.y,     0 }); // west
 }
 
 
 
-void updateRoadMeshInCell(glm::vec2 gridPosition) {
-	size_t index = World.size * gridPosition.y + gridPosition.x;
-	if (index >= World.size * World.size) {
-		printf("Exceeded Wolrd.grid index\n");
+void updateRoadMeshInCell(glm::vec3 gridPosition) {
+	int index = gridIndex(gridPosition);
+	// @Temporary this maybe need to work in 3D
+	if (index >= World.dimensions.x * World.dimensions.y) {
+		printf("Exceeded World.grid index\n");
 		return;
 	}
-	
+
 	int road = RoadNetwork.roads[index];
 
 	Model model;
@@ -147,12 +146,12 @@ void updateRoadMeshInCell(glm::vec2 gridPosition) {
 
 	Building b;
 	b.model = model;
-	placeBuilding(b, gridPosition, true);
+	placeBuildingAtGridCoords(b, gridPosition, true);
 }
 
 
 void printNetwork() {
-	for (int i = 0; i < World.size; i++) {
+	for (int i = 0; i < World.dimensions.x; i++) {
 		int digits = std::to_string(i).size();
 		if (digits > 1)
 			printf("%i ", i);
@@ -164,8 +163,8 @@ void printNetwork() {
 
 	printf("-----------------------------------------------------------\n");
 
-	for (int i = 0; i < World.size * World.size; i++) {
-		if (i % World.size == 0) printf("\n");
+	for (int i = 0; i < World.dimensions.x * World.dimensions.y; i++) {
+		if (i % (int)World.dimensions.x == 0) printf("\n");
 		int digits = std::to_string(RoadNetwork.roads[i]).size();
 		if (digits > 1)
 			printf("%i ", RoadNetwork.roads[i]);

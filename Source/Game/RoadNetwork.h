@@ -4,6 +4,8 @@
 
 #include <glm/glm.hpp>
 
+#include <Game/World.h>
+
 /*
 		N
 	y+	^
@@ -31,6 +33,6 @@ extern RoadNetworkInfo RoadNetwork;
 
 void initRoadNetwork();
 
-void addRoad(glm::vec2 gridPosition);
-void updateRoadMeshInCell(glm::vec2 gridPosition);
+void addRoad(glm::vec3 gridPosition);
+void updateRoadMeshInCell(glm::vec3 gridPosition);
 void printNetwork();

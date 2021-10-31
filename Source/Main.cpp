@@ -28,7 +28,7 @@ int main() {
 	cameraRotateY(camera, 135);
 	cameraRotateX(camera, 40);
 
-	initWorld(20, 1.0f, getShader("default").handle);
+	initWorld({20, 20, 5}, 1.0f, getShader("default").handle);
 	initInterface(window, getShader("default").handle);
 
 	initRoadNetwork();
