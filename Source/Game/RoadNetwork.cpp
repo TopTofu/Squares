@@ -3,10 +3,10 @@
 RoadNetworkInfo RoadNetwork;
 
 void initRoadNetwork() {
-	if (!World.initialized)
+	if (!World->initialized)
 		throw(errno);
 
-	for (int y = 0; y < World.grid.size(); y++) {
+	for (int y = 0; y < World->grid.size(); y++) {
 		RoadNetwork.roads.push_back(0);
 	}
 }
@@ -19,14 +19,14 @@ void addRoad(glm::vec3 gridPosition) {
 	bool south = 0;
 	bool west = 0;
 
-	if (gridPosition.x < World.dimensions.x - 1) {
+	if (gridPosition.x < World->dimensions.x - 1) {
 		north = (int)RoadNetwork.roads[index + 1] & 1;
 		RoadNetwork.roads[index + 1] |= 1 << 3; // northern cell now knows that its southern is placed
 	}
 
-	if (gridPosition.y < World.dimensions.y - 1) {
-		east = (int)RoadNetwork.roads[index + World.dimensions.y] & 1;
-		RoadNetwork.roads[index + World.dimensions.y] |= 1 << 4;
+	if (gridPosition.y < World->dimensions.y - 1) {
+		east = (int)RoadNetwork.roads[index + World->dimensions.y] & 1;
+		RoadNetwork.roads[index + World->dimensions.y] |= 1 << 4;
 	}
 
 	if (gridPosition.x > 0) {
@@ -35,8 +35,8 @@ void addRoad(glm::vec3 gridPosition) {
 	}
 
 	if (gridPosition.y > 0) {
-		west = (int)RoadNetwork.roads[index - World.dimensions.y] & 1;
-		RoadNetwork.roads[index - World.dimensions.y] |= 1 << 2;
+		west = (int)RoadNetwork.roads[index - World->dimensions.y] & 1;
+		RoadNetwork.roads[index - World->dimensions.y] |= 1 << 2;
 	}
 
 	RoadNetwork.roads[index] = 1 + (north << 1) + (east << 2) + (south << 3) + (west << 4);
@@ -53,8 +53,8 @@ void addRoad(glm::vec3 gridPosition) {
 void updateRoadMeshInCell(glm::vec3 gridPosition) {
 	int index = gridIndex(gridPosition);
 	// @Temporary this maybe need to work in 3D
-	if (index >= World.dimensions.x * World.dimensions.y) {
-		printf("Exceeded World.grid index\n");
+	if (index >= World->dimensions.x * World->dimensions.y || index < 0) {
+		printf("Exceeded World->grid index\n");
 		return;
 	}
 
@@ -151,7 +151,7 @@ void updateRoadMeshInCell(glm::vec3 gridPosition) {
 
 
 void printNetwork() {
-	for (int i = 0; i < World.dimensions.x; i++) {
+	for (int i = 0; i < World->dimensions.x; i++) {
 		int digits = std::to_string(i).size();
 		if (digits > 1)
 			printf("%i ", i);
@@ -163,8 +163,8 @@ void printNetwork() {
 
 	printf("-----------------------------------------------------------\n");
 
-	for (int i = 0; i < World.dimensions.x * World.dimensions.y; i++) {
-		if (i % (int)World.dimensions.x == 0) printf("\n");
+	for (int i = 0; i < World->dimensions.x * World->dimensions.y; i++) {
+		if (i % (int)World->dimensions.x == 0) printf("\n");
 		int digits = std::to_string(RoadNetwork.roads[i]).size();
 		if (digits > 1)
 			printf("%i ", RoadNetwork.roads[i]);

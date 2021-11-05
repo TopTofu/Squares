@@ -1,15 +1,12 @@
 #include <Game/World.h>
 
-WorldInfo World;
+WorldInfo* World;
 
 void initWorld(glm::vec3 dimensions, float cellSize, GLuint shader) {
-	if (World.initialized) {
-		printf("World Struct has already been initialized!");
-		return;
-	}
+	World = new WorldInfo;
 
-	World.dimensions = dimensions;
-	World.cellSize = cellSize;
+	World->dimensions = dimensions;
+	World->cellSize = cellSize;
 
 	for (int z = 0; z < dimensions.z; z++) {
 		for (int y = 0; y < dimensions.y; y++) {
@@ -18,7 +15,7 @@ void initWorld(glm::vec3 dimensions, float cellSize, GLuint shader) {
 				c.gridPosition = { x, y, z };
 				c.worldPosition = { x * cellSize, z * cellSize, y * cellSize };
 
-				World.grid.push_back(c);
+				World->grid.push_back(c);
 			}
 		}
 	}
@@ -26,25 +23,25 @@ void initWorld(glm::vec3 dimensions, float cellSize, GLuint shader) {
 	for (int z = 0; z < dimensions.z; z++) {
 		for (int y = 0; y < dimensions.y; y++) {
 			for (int x = 0; x < dimensions.x; x++) {
-				Cell* c = &World.grid[gridIndex({ x, y, z })];
+				Cell* c = &World->grid[gridIndex({ x, y, z })];
 				if (z > 0)
-					c->below = &World.grid[gridIndex({ x, y, z - 1 })];
+					c->below = &World->grid[gridIndex({ x, y, z - 1 })];
 				if (z < dimensions.z - 1)
-					c->above = &World.grid[gridIndex({ x, y, z + 1 })];
+					c->above = &World->grid[gridIndex({ x, y, z + 1 })];
 			}
 		}
 	}
 
-	World.mesh = getQuadMesh({ 0, 0, 0 }, { cellSize * dimensions.x, 0, 0 }, { 0, 0, cellSize * dimensions.y }, { 0.09f, 0.34f, 0.23f, 1.0f });
-	World.mesh.shader = shader;
+	World->mesh = getQuadMesh({ 0, 0, 0 }, { cellSize * dimensions.x, 0, 0 }, { 0, 0, cellSize * dimensions.y }, { 0.09f, 0.34f, 0.23f, 1.0f });
+	World->mesh.shader = shader;
 
-	World.initialized = true;
+	World->initialized = true;
 }
 
 void renderWorld(Camera& camera) {
-	renderMesh(World.mesh, camera);
+	renderMesh(World->mesh, camera);
 
-	for (Cell& cell : World.grid) {
+	for (Cell& cell : World->grid) {
 		if (cell.occupied)
 			renderBuilding(cell.occupant, camera);
 	}
@@ -52,16 +49,16 @@ void renderWorld(Camera& camera) {
 
 Cell* cellAtWorldCoords(glm::vec3 coords) {
 	// world y is up while grid z is up
-	int gridX = coords.x / World.cellSize;
-	int gridY = coords.z / World.cellSize;
-	int gridZ = coords.y / World.cellSize;
+	int gridX = coords.x / World->cellSize;
+	int gridY = coords.z / World->cellSize;
+	int gridZ = coords.y / World->cellSize;
 
-	gridX = std::clamp(gridX, 0, (int)World.dimensions.x - 1);
-	gridY = std::clamp(gridY, 0, (int)World.dimensions.y - 1);
-	gridZ = std::clamp(gridZ, 0, (int)World.dimensions.z - 1);
+	gridX = std::clamp(gridX, 0, (int)World->dimensions.x - 1);
+	gridY = std::clamp(gridY, 0, (int)World->dimensions.y - 1);
+	gridZ = std::clamp(gridZ, 0, (int)World->dimensions.z - 1);
 	int index = gridIndex({ gridX, gridY, gridZ });
 
-	Cell* c = &World.grid[index];
+	Cell* c = &World->grid[index];
 	return c;
 }
 
@@ -74,16 +71,16 @@ void placeBuildingAtWorldCoords(Building& building, glm::vec3 worldCoords, bool 
 }
 
 void placeBuildingAtGridCoords(Building& building, glm::vec3 gridCoords, bool force) {
-	Cell* cell = &World.grid[gridIndex(gridCoords)];
+	Cell* cell = &World->grid[gridIndex(gridCoords)];
 	if (!cell->occupied || force) {
 		cell->occupant = building;
-		cell->occupant.model.translation = cell->worldPosition + glm::vec3(World.cellSize * 0.5f, 0, World.cellSize * 0.5f);
+		cell->occupant.model.translation = cell->worldPosition + glm::vec3(World->cellSize * 0.5f, 0, World->cellSize * 0.5f);
 		cell->occupied = true;
 	}
 }
 
 void removeBuildingAtGridCoords(glm::vec3 gridCoords) {
-	Cell* cell = &World.grid[gridIndex(gridCoords)];
+	Cell* cell = &World->grid[gridIndex(gridCoords)];
 	cell->occupant = {};
 	cell->occupied = false;
 }
@@ -95,5 +92,5 @@ void removeBuildingAtWorldCoords(glm::vec3 worldCoords) {
 }
 
 int gridIndex(glm::vec3 gridCoords) {
-	return gridCoords.x + gridCoords.y * World.dimensions.x + gridCoords.z * World.dimensions.x * World.dimensions.y;
+	return gridCoords.x + gridCoords.y * World->dimensions.x + gridCoords.z * World->dimensions.x * World->dimensions.y;
 }

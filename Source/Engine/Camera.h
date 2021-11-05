@@ -6,8 +6,8 @@
 #include <glm/gtx/intersect.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-#include <Util/Common.h>
-#include <Util/Utilities.h>
+#include "Util/Common.h"
+#include "Util/Utilities.h"
 
 #include <GLFW/glfw3.h>
 

@@ -19,7 +19,7 @@ void initOpenGL(GLFWwindow* window, int width, int height) {
 	glEnable(GL_BLEND);
 
 	// vsync
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 }
 
 

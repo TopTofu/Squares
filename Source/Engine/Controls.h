@@ -6,10 +6,10 @@
 #include <glm/gtx/intersect.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-#include <Engine/Camera.h>
-#include <Engine/Camera.h>
-#include <Game/Interface.h>
-#include <Engine/Context.h>
+#include "Engine/Camera.h"
+#include "Engine/Camera.h"
+#include "Game/Interface.h"
+#include "Engine/Context.h"
 
 #include <GLFW/glfw3.h>
 

@@ -2,20 +2,20 @@
 
 #include <glad/glad.h>
 
-#include <Engine/Window.h>
-#include <Engine/Render.h>
-#include <Engine/Shader.h>
-#include <Engine/Light.h>
-#include <Engine/Controls.h>
-#include <Engine/ModelLoader.h>
+#include "Engine/Window.h"
+#include "Engine/Render.h"
+#include "Engine/Shader.h"
+#include "Engine/Light.h"
+#include "Engine/Controls.h"
+#include "Engine/ModelLoader.h"
+#include "Engine/Font.h"
 
-#include <Util/Common.h>
-#include <Util/DebugInterface.h>
+#include "Util/Common.h"
+#include "Util/DebugInterface.h"
 
-#include <Game/World.h>
-#include <Game/Interface.h>
-#include <Game/RoadNetwork.h>
-
+#include "Game/World.h"
+#include "Game/Interface.h"
+#include "Game/RoadNetwork.h"
 
 int main() {
 	GLFWwindow* window = initWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -24,16 +24,20 @@ int main() {
 	loadShaders();
 	loadTextures();
 
+	FontInfo font = loadFont("C:/Windows/Fonts/arial.ttf");
+	BitmapInfo bitmap = getCodePoint(font, 'A');
+	createTextureFromBitmap(&bitmap, true, "testFont");
+
 	Camera camera = initCamera(glm::vec3(-1.0f, 4.0f, -1.0f), WINDOW_WIDTH, WINDOW_HEIGHT);
 	cameraRotateY(camera, 135);
 	cameraRotateX(camera, 40);
 
-	initWorld({20, 20, 5}, 1.0f, getShader("default").handle);
+	initWorld({ 20, 20, 5 }, 1.0f, getShader("default").handle);
 	initInterface(window, getShader("default").handle);
 
 	initRoadNetwork();
 
-	initModelLoader(getShader("material").handle, glm::vec3(World.cellSize / 2.0f));
+	initModelLoader(getShader("material").handle, glm::vec3(World->cellSize / 2.0f));
 
 	Light light = initLight({ 10.0f, 20.0f, 10.0f });
 
@@ -56,7 +60,7 @@ int main() {
 		renderInterface(camera);
 
 		renderDebugInterface();
-		
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

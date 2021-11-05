@@ -2,9 +2,9 @@
 
 #include <glm/glm.hpp>
 
-#include <Engine/Mesh.h>
-#include <Engine/Render.h>
-#include <Game/Building.h>
+#include "Engine/Mesh.h"
+#include "Engine/Render.h"
+#include "Game/Building.h"
 
 #include <vector>
 #include <algorithm>
@@ -36,7 +36,7 @@ struct WorldInfo {
 	bool initialized = false;
 };
 
-extern WorldInfo World;
+extern WorldInfo* World;
 
 
 void initWorld(glm::vec3 dimensions, float cellSize, GLuint shader);

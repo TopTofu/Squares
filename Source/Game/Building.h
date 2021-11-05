@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Engine/Mesh.h>
-#include <Engine/Render.h>
+#include "Engine/Mesh.h"
+#include "Engine/Render.h"
 
 
-enum BuildingType{
+enum class BuildingType{
 	NONE = 0,
 	ROAD = 1,
 	APARTMENT = 2,
@@ -15,7 +15,7 @@ enum BuildingType{
 struct Building {
 	Model model;
 
-	BuildingType type = NONE;
+	BuildingType type = BuildingType::NONE;
 };
 
 

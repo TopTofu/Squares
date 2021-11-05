@@ -10,11 +10,11 @@
 #include <string>
 #include <fstream>
 
-#include <Engine/Shader.h>
-#include <Engine/Texture.h>
-#include <Engine/Camera.h>
+#include "Engine/Shader.h"
+#include "Engine/Texture.h"
+#include "Engine/Camera.h"
 
-#include <Util/Utilities.h>
+#include "Util/Utilities.h"
 
 
 struct Vertex {
@@ -25,7 +25,7 @@ struct Vertex {
 };
 
 
-enum IlluminationMode {
+enum class IlluminationMode{
 	ColorOnAmbientOff = 0,
 	ColorOnAmbientOn = 1,
 	HighlightOn = 2,

@@ -5,7 +5,8 @@
 
 #include <glad/glad.h>
 
-#include <Util/Utilities.h>
+#include "Util/Utilities.h"
+#include "Engine/AssetLoader.h"
 
 
 struct Texture {
@@ -21,3 +22,4 @@ extern TextureLoaderInfo TextureLoader;
 
 void loadTextures();
 Texture* getTextureByName(std::string name);
+Texture* createTextureFromBitmap(BitmapInfo* bitmap, bool emplace = false, std::string name = "");

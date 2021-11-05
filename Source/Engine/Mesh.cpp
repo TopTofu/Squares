@@ -21,12 +21,12 @@ Mesh getQuadMesh(glm::vec3 origin, glm::vec3 s0, glm::vec3 s1, glm::vec4 color, 
 	mesh.vertices.push_back(v2);
 	mesh.vertices.push_back(v3);
 
-	mesh.indices.push_back(1);
 	mesh.indices.push_back(0);
+	mesh.indices.push_back(1);
 	mesh.indices.push_back(2);
 
-	mesh.indices.push_back(2);
 	mesh.indices.push_back(0);
+	mesh.indices.push_back(2);
 	mesh.indices.push_back(3);
 
 	mesh.primitive = GL_TRIANGLES;

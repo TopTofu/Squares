@@ -68,3 +68,31 @@ void loadTextures() {
 Texture* getTextureByName(std::string name) {
 	return &TextureLoader.textures[name];
 }
+
+
+Texture* createTextureFromBitmap(BitmapInfo* bitmap, bool emplace, std::string name) {
+	Texture texture;
+	
+	GLuint texID;
+
+	glGenTextures(1, &texID);
+	glBindTexture(GL_TEXTURE_2D, texID);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bitmap->width, bitmap->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bitmap->contents);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	texture.id = texID;
+
+	if (emplace) {
+		TextureLoader.textures.emplace(name, texture);
+	}
+
+	return &texture;
+}

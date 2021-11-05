@@ -14,7 +14,7 @@ std::vector<std::string> shaderFiles = {
 };
 
 void loadShaders() {
-	for (int i = 0; i < shaderFiles.size(); i += 2) {
+	for (size_t i = 0; i < shaderFiles.size(); i += 2) {
 		GLuint vertShader = compileShader(shaderFiles[i]);
 		GLuint fragShader = compileShader(shaderFiles[i + 1]);
 		GLuint shader = createProgram(vertShader, fragShader);
@@ -60,7 +60,6 @@ std::string getExtension(std::string filePath) {
 
 	return "";
 }
-
 
 GLuint compileShader(std::string filePath) {
 	std::string content = readFileContents(filePath);

@@ -6,8 +6,13 @@ InterfaceInfo Interface;
 
 void pickCell(glm::vec3 worldCoords) {
 	Cell* c = cellAtWorldCoords(worldCoords);
+
+	while (c->occupied && c->above && Interface.cellPicker.mode != PickerMode::ROAD) {
+		c = c->above;
+	}
+
 	Interface.cellPicker.baseMesh.translation = c->worldPosition;
-	Interface.cellPicker.stuckObject.translation = c->worldPosition + glm::vec3(World.cellSize * 0.5f, 0.0f, World.cellSize * 0.5f);
+	Interface.cellPicker.stuckObject.translation = c->worldPosition + glm::vec3(World->cellSize * 0.5f, 0.0f, World->cellSize * 0.5f);
 }
 
 void initInterface(GLFWwindow* window, GLuint shader) {
@@ -16,12 +21,12 @@ void initInterface(GLFWwindow* window, GLuint shader) {
 		return;
 	}
 
-	if (!World.initialized) {
+	if (!World->initialized) {
 		printf("World needs to be initilized before Interface!");
 		return;
 	}
 
-	float cellSize = World.cellSize;
+	float cellSize = World->cellSize;
 	Interface.cellPicker.baseMesh = getQuadMesh({ 0, 0.001f, 0 }, { cellSize, 0, 0 }, { 0, 0, cellSize }, { 0.2f, 0.45f, 0.35f, 1.0f });
 	Interface.cellPicker.baseMesh.shader = shader;
 
@@ -87,10 +92,10 @@ void initElements() {
 	button4 = button;
 	button4.id = "4";
 
-	button.mesh.texture = getTextureByName("alphaBMP");
-	button2.mesh.texture = getTextureByName("alphaJPG");
-	button3.mesh.texture = getTextureByName("alphaPNG");
-	button4.mesh.texture = getTextureByName("house02");
+	button.mesh.texture = getTextureByName("testFont");
+	button2.mesh.texture = getTextureByName("testFont");
+	button3.mesh.texture = getTextureByName("road");
+	button4.mesh.texture = getTextureByName("testFont");
 
 	translateMeshBy(button.mesh, { 0, 600, 0 });
 	translateMeshBy(button2.mesh, { 120, 600, 0 });
@@ -216,7 +221,7 @@ void renderInterface(Camera& camera) {
 void stickModelToPicker(Model& model, PickerMode mode) {
 	Interface.cellPicker.stuckObject = model;
 	Interface.cellPicker.mode = mode;
-	Interface.cellPicker.stuckObject.translation = Interface.cellPicker.baseMesh.translation + glm::vec3(World.cellSize * 0.5f, 0.0f, World.cellSize * 0.5f);
+	Interface.cellPicker.stuckObject.translation = Interface.cellPicker.baseMesh.translation + glm::vec3(World->cellSize * 0.5f, 0.0f, World->cellSize * 0.5f);
 }
 
 void unstuckModelFromPicker() {
