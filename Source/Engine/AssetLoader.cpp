@@ -42,6 +42,7 @@ BitmapInfo getEmptyBitmap(u32 width, u32 height, bool clear) {
 	Result.contents = data;
 	Result.width = width;
 	Result.height = height;
+	Result.pitch = width * BITMAP_BYTES_PER_PIXEL;
 
 	return Result;
 }

@@ -10,8 +10,8 @@ FontInfo loadFont(const char* filename)
 	FontInfo info;
 	ReadFileResult ttfBuffer = readFileIntoBuffer(filename);
 
-	stbtt_InitFont(&info.font, (unsigned char*) ttfBuffer.content, stbtt_GetFontOffsetForIndex((unsigned char*) ttfBuffer.content, 0));
-	
+	stbtt_InitFont(&info.font, (unsigned char*)ttfBuffer.content, stbtt_GetFontOffsetForIndex((unsigned char*)ttfBuffer.content, 0));
+
 	return info;
 }
 
@@ -20,18 +20,20 @@ BitmapInfo getCodePoint(FontInfo info, char c) {
 	int xOffset, yOffset;
 
 	// 8bpp single channel
-	u8* bitmap = stbtt_GetCodepointBitmap(&info.font, 0, stbtt_ScaleForPixelHeight(&info.font, 120.f), c, &width, &height, &xOffset, &yOffset);
+	u8* bitmap = stbtt_GetCodepointBitmap(&info.font, 0, stbtt_ScaleForPixelHeight(&info.font, 150.f), c, &width, &height, &xOffset, &yOffset);
 
 	BitmapInfo Result = getEmptyBitmap(width, height, false);
 
 	u8* Source = bitmap;
-	u32* Pixel = (u32*)Result.contents;
+	u8* Row = (u8*)Result.contents + Result.pitch * (height - 1);
 
 	for (int y = 0; y < height; y++) {
+		u32* Pixel = (u32*)Row;
 		for (int x = 0; x < width; x++) {
 			u8 alpha = *Source++;
 			*Pixel++ = ((alpha << 24) | (alpha << 16) | (alpha << 8) | (alpha << 0));
 		}
+		Row -= Result.pitch;
 	}
 
 	freeSTBBitmap(bitmap);
