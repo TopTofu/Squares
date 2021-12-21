@@ -5,26 +5,17 @@
 
 TextureLoaderInfo TextureLoader;
 
-std::string texturePaths[] = {
-	"./Resources/Textures/alphaBMP.bmp",
-	"./Resources/Textures/alphaJPG.jpg",
-	"./Resources/Textures/alphaPNG.png",
-	"./Resources/Textures/Splash/house02.jpg",
-	"./Resources/Textures/Splash/house03.png",
-	"./Resources/Textures/Splash/house04.png",
-	"./Resources/Textures/Splash/road.jpg",
-};
-
-
-void loadTextures() {
-	int x, y, c;
+void loadTextures(std::string texturesDirectory) {
 	stbi_set_flip_vertically_on_load(true);
 
-	for (auto path : texturePaths) {
+	for (auto file : std::filesystem::directory_iterator(texturesDirectory)) {
+		// lmao what even is this
+		std::string path{ file.path().u8string() };
+		int x, y, c;
 		unsigned char* data = stbi_load(path.c_str(), &x, &y, &c, 0);
 
 		if (!data) {
-			printf("Failed to load texture file [%s]\n", path.c_str());
+			printf("Failed to load texture file [%s]\n", path);
 			continue;
 		}
 
@@ -36,7 +27,7 @@ void loadTextures() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		if (c == 4) {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -45,7 +36,7 @@ void loadTextures() {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		}
 		else {
-			printf("No support for %i number of color channels in texture file [%s]\n", c, path.c_str());
+			printf("No support for %i number of color channels in texture file [%s]\n", c, path);
 			stbi_image_free(data);
 			continue;
 		}

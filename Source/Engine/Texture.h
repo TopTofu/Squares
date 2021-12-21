@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <filesystem>
 #include <map>
 
 #include <glad/glad.h>
@@ -20,6 +21,6 @@ struct TextureLoaderInfo {
 
 extern TextureLoaderInfo TextureLoader;
 
-void loadTextures();
+void loadTextures(std::string texturesDirectory);
 Texture* getTextureByName(std::string name);
 Texture* createTextureFromBitmap(BitmapInfo* bitmap, bool emplace = false, std::string name = "");

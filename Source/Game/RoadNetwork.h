@@ -35,4 +35,5 @@ void initRoadNetwork();
 
 void addRoad(glm::vec3 gridPosition);
 void updateRoadMeshInCell(glm::vec3 gridPosition);
+Model getRoadTexturedQuad(std::string name);
 void printNetwork();

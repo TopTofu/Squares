@@ -1,6 +1,6 @@
 #include <Engine/Mesh.h>
 
-Mesh getQuadMesh(glm::vec3 origin, glm::vec3 s0, glm::vec3 s1, glm::vec4 color, bool buffer) {
+Mesh getQuadMesh(glm::vec3 origin, glm::vec3 s0, glm::vec3 s1, glm::vec4 color, bool buffer, Texture* texture) {
 	Mesh mesh;
 
 	Vertex v0;
@@ -15,6 +15,15 @@ Mesh getQuadMesh(glm::vec3 origin, glm::vec3 s0, glm::vec3 s1, glm::vec4 color, 
 	Vertex v3;
 	v3.position = origin + s1;
 	v3.color = color;
+
+	if (texture != 0) {
+		v0.uv = { 0,0 };
+		v1.uv = { 1,0 };
+		v2.uv = { 1,1 };
+		v3.uv = { 0,1 };
+
+		mesh.texture = texture;
+	}
 
 	mesh.vertices.push_back(v0);
 	mesh.vertices.push_back(v1);

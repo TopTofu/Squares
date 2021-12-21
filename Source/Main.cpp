@@ -22,7 +22,7 @@ int main() {
 	initOpenGL(window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	loadShaders();
-	loadTextures();
+	loadTextures("./Resources/Textures/");
 
 	FontInfo font = loadFont("C:/Windows/Fonts/arial.ttf");
 	BitmapInfo bitmap = getCodePoint(font, 'A');

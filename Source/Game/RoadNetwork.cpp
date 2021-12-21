@@ -70,83 +70,99 @@ void updateRoadMeshInCell(glm::vec3 gridPosition) {
 		}
 
 		if (!(road & 2) && !(road & 4) && !(road & 8) && !(road & 16)) {
-			model = getRoadEnd();
+			model = getRoadTexturedQuad("road_o");
 		}
 
 		else if ((road & 2) && !(road & 4) && !(road & 8) && !(road & 16)) {
-			model = getRoadEnd();
-			rotateModelBy(model, { 0,1,0 }, -90);
-		}
-
-		else if (!(road & 2) && (road & 4) && !(road & 8) && !(road & 16)) {
-			model = getRoadEnd();
-			rotateModelBy(model, { 0,1,0 }, 180);
-		}
-
-		else if ((road & 2) && (road & 4) && !(road & 8) && !(road & 16)) {
-			model = getCurvedStreet();
-			rotateModelBy(model, { 0,1,0 }, 180);
-		}
-
-		else if (!(road & 2) && !(road & 4) && (road & 8) && !(road & 16)) {
-			model = getRoadEnd();
+			model = getRoadTexturedQuad("road_end");
 			rotateModelBy(model, { 0,1,0 }, 90);
 		}
 
+		else if (!(road & 2) && (road & 4) && !(road & 8) && !(road & 16)) {
+			model = getRoadTexturedQuad("road_end");
+		}
+
+		else if ((road & 2) && (road & 4) && !(road & 8) && !(road & 16)) {
+			model = getRoadTexturedQuad("road_curve");
+			rotateModelBy(model, { 0,1,0 }, 270);
+		}
+
+		else if (!(road & 2) && !(road & 4) && (road & 8) && !(road & 16)) {
+			model = getRoadTexturedQuad("road_end");
+			rotateModelBy(model, { 0,1,0 }, 270);
+		}
+
 		else if ((road & 2) && !(road & 4) && (road & 8) && !(road & 16)) {
-			model = getStraightStreet();
+			model = getRoadTexturedQuad("road_straight");
 			rotateModelBy(model, { 0,1,0 }, 90);
 		}
 
 		else if (!(road & 2) && (road & 4) && (road & 8) && !(road & 16)) {
-			model = getCurvedStreet();
-			rotateModelBy(model, { 0,1,0 }, 90);
-		}
-
-		else if ((road & 2) && (road & 4) && (road & 8) && !(road & 16)) {
-			model = getTJunction();
-			rotateModelBy(model, { 0,1,0 }, -90);
-		}
-
-		else if (!(road & 2) && !(road & 4) && !(road & 8) && (road & 16)) {
-			model = getRoadEnd();
-		}
-
-		else if ((road & 2) && !(road & 4) && !(road & 8) && (road & 16)) {
-			model = getCurvedStreet();
-			rotateModelBy(model, { 0,1,0 }, -90);
-		}
-
-		else if (!(road & 2) && (road & 4) && !(road & 8) && (road & 16)) {
-			model = getStraightStreet();
-		}
-
-		else if ((road & 2) && (road & 4) && !(road & 8) && (road & 16)) {
-			model = getTJunction();
-		}
-
-		else if (!(road & 2) && !(road & 4) && (road & 8) && (road & 16)) {
-			model = getCurvedStreet();
-		}
-
-		else if ((road & 2) && !(road & 4) && (road & 8) && (road & 16)) {
-			model = getTJunction();
-			rotateModelBy(model, { 0,1,0 }, 90);
-		}
-
-		else if (!(road & 2) && (road & 4) && (road & 8) && (road & 16)) {
-			model = getTJunction();
+			model = getRoadTexturedQuad("road_curve");
 			rotateModelBy(model, { 0,1,0 }, 180);
 		}
 
+		else if ((road & 2) && (road & 4) && (road & 8) && !(road & 16)) {
+			model = getRoadTexturedQuad("road_t");
+		}
+
+		else if (!(road & 2) && !(road & 4) && !(road & 8) && (road & 16)) {
+			model = getRoadTexturedQuad("road_end");
+			rotateModelBy(model, { 0,1,0 }, 180);
+		}
+
+		else if ((road & 2) && !(road & 4) && !(road & 8) && (road & 16)) {
+			model = getRoadTexturedQuad("road_curve");
+		}
+
+		else if (!(road & 2) && (road & 4) && !(road & 8) && (road & 16)) {
+			model = getRoadTexturedQuad("road_straight");
+		}
+
+		else if ((road & 2) && (road & 4) && !(road & 8) && (road & 16)) {
+			model = getRoadTexturedQuad("road_t");
+			rotateModelBy(model, { 0,1,0 }, 90);
+		}
+
+		else if (!(road & 2) && !(road & 4) && (road & 8) && (road & 16)) {
+			model = getRoadTexturedQuad("road_curve"); // correct
+			rotateModelBy(model, { 0,1,0 }, 90);
+		}
+
+		else if ((road & 2) && !(road & 4) && (road & 8) && (road & 16)) {
+			model = getRoadTexturedQuad("road_t");
+			rotateModelBy(model, { 0,1,0 }, 180);
+		}
+
+		else if (!(road & 2) && (road & 4) && (road & 8) && (road & 16)) {
+			model = getRoadTexturedQuad("road_t");
+			rotateModelBy(model, { 0,1,0 }, -90);
+		}
+
 		else if ((road & 2) && (road & 4) && (road & 8) && (road & 16)) {
-			model = getXJunction();
+			model = getRoadTexturedQuad("road_x");
 		}
 	}
 
 	Building b;
 	b.model = model;
 	placeBuildingAtGridCoords(b, gridPosition, true);
+}
+
+
+Model getRoadTexturedQuad(std::string name) {
+	Mesh mesh = getQuadMesh({ -0.5, 0.01, -0.5 }, { 1,0,0 }, { 0,0,1 }, {}, true, getTextureByName(name));
+
+	GLuint materialShader = getShader("material").handle;
+	mesh.shader = materialShader;
+
+	Material curbMat;
+	curbMat.diffuse = { 0.71f, 0.62f, 0.45f };
+
+	Model model;
+	model.meshes.push_back(mesh);
+
+	return model;
 }
 
 

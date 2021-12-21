@@ -52,7 +52,7 @@ void sampleCallback(InterfaceElement* element) {
 		stickModelToPicker(m, PickerMode::BUILDING);
 	}
 	if (element->id == "4") {
-		Model m = getRoadEnd();
+		Model m = getRoadTexturedQuad("road_o");
 		stickModelToPicker(m, PickerMode::ROAD);
 	}
 }
@@ -92,10 +92,10 @@ void initElements() {
 	button4 = button;
 	button4.id = "4";
 
-	button.mesh.texture = getTextureByName("testFont");
-	button2.mesh.texture = getTextureByName("testFont");
-	button3.mesh.texture = getTextureByName("road");
-	button4.mesh.texture = getTextureByName("testFont");
+	button.mesh.texture = getTextureByName("road_x");
+	button2.mesh.texture = getTextureByName("road_straight");
+	button3.mesh.texture = getTextureByName("road_o");
+	button4.mesh.texture = getTextureByName("road_curve");
 
 	translateMeshBy(button.mesh, { 0, 600, 0 });
 	translateMeshBy(button2.mesh, { 120, 600, 0 });
@@ -122,7 +122,7 @@ void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action,
 		stickModelToPicker(m, PickerMode::BUILDING);
 	}
 	if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
-		Model m = getRoadEnd();
+		Model m = getRoadTexturedQuad("road_o");
 		stickModelToPicker(m, PickerMode::ROAD);
 	}
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {

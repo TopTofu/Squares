@@ -26,6 +26,14 @@ void initOpenGL(GLFWwindow* window, int width, int height) {
 void renderMesh(Mesh& mesh, Camera& camera, glm::mat4 parentTransform) {
 	glUseProgram(mesh.shader);
 
+	if (mesh.texture != 0) {
+		glBindTexture(GL_TEXTURE_2D, mesh.texture->id);
+		glUniform1i(glGetUniformLocation(mesh.shader, "Textured"), 1);
+	}
+	else {
+		glUniform1i(glGetUniformLocation(mesh.shader, "Textured"), 0);
+	}
+
 	glBindVertexArray(mesh.vao);
 
 	glm::mat4 cameraMatrix = getCameraMatrix(camera);
