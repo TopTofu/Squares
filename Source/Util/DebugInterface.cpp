@@ -36,9 +36,6 @@ void updateDebugInterface(Light& light) {
 	ImGui::Checkbox("wireframe", &Debug.wireframe);
 	ImGui::Text((std::to_string(fps) + " FPS").c_str());
 	ImGui::Text((std::to_string(dt) + " ms").c_str());
-	if (Interface.cellPicker.stuckObject.meshes.size() > 0) {
-		ImGui::SliderFloat(".", (float*)&Interface.cellPicker.stuckObject.meshes[0].material.specularExponent, -1.0f, 1000.0f);
-	}
 	ImGui::End();
 
 	if (Debug.wireframe)

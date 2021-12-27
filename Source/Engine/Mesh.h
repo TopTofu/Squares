@@ -113,6 +113,7 @@ void scaleModelTo(Model& model, glm::vec3 scale);
 void scaleModelBy(Model& model, glm::vec3 scale);
 
 void rotateModelBy(Model& model, glm::vec3 axis, float degrees);
+void rotateModelTo(Model& model, glm::quat rotation);
 
 Model loadOBJ(std::string filePath, bool buffer = true);
 std::vector<Material> loadMtl(std::string filePath);

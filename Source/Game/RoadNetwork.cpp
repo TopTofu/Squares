@@ -65,7 +65,6 @@ void updateRoadMeshInCell(glm::vec3 gridPosition) {
 
 	{
 		if (!(road & 1)) {
-			//removeBuilding(gridPosition);
 			return;
 		}
 
@@ -125,7 +124,7 @@ void updateRoadMeshInCell(glm::vec3 gridPosition) {
 		}
 
 		else if (!(road & 2) && !(road & 4) && (road & 8) && (road & 16)) {
-			model = getRoadTexturedQuad("road_curve"); // correct
+			model = getRoadTexturedQuad("road_curve");
 			rotateModelBy(model, { 0,1,0 }, 90);
 		}
 
@@ -146,12 +145,20 @@ void updateRoadMeshInCell(glm::vec3 gridPosition) {
 
 	Building b;
 	b.model = model;
+	b.xSize = 1;
+	b.ySize = 1;
+	b.type = BuildingType::ROAD;
+
+	// @fix this means every road update might have up to 4 additional building placements. this also increments the global building id
+	// should be better to update the texture on the quad instead of getting an entirely new quad, which will preserve the already existing building
+	removeBuildingAtGridCoords(gridPosition);
 	placeBuildingAtGridCoords(b, gridPosition, true);
 }
 
 
 Model getRoadTexturedQuad(std::string name) {
-	Mesh mesh = getQuadMesh({ -0.5, 0.01, -0.5 }, { 1,0,0 }, { 0,0,1 }, {}, true, getTextureByName(name));
+	float size = World->cellSize;
+	Mesh mesh = getQuadMesh({ -size * 0.5, 0.01, -size * 0.5 }, { size, 0, 0 }, { 0, 0, size }, {}, true, getTextureByName(name));
 
 	GLuint materialShader = getShader("material").handle;
 	mesh.shader = materialShader;
@@ -187,6 +194,31 @@ void printNetwork() {
 		else
 			printf("%i  ", RoadNetwork.roads[i]);
 
+	}
+
+	printf("\n");
+}
+
+
+void printNetworkSimple() {
+	for (int i = 0; i < World->dimensions.x; i++) {
+		int digits = std::to_string(i).size();
+		if (digits > 1)
+			printf("%i ", i);
+		else
+			printf("%i  ", i);
+	}
+
+	printf("\n");
+
+	printf("-----------------------------------------------------------\n");
+
+	for (int i = 0; i < World->dimensions.x * World->dimensions.y; i++) {
+		if (i % (int)World->dimensions.x == 0) printf("\n");
+		if (RoadNetwork.roads[i] % 2 != 0)
+			printf("1 ");
+		else
+			printf("0 ");
 	}
 
 	printf("\n");

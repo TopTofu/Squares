@@ -40,3 +40,27 @@ std::vector<std::string> splitAt(std::string s, const char* c) {
 std::string getFileNameFromPath(std::string path) {
 	return path.substr(0, path.rfind('.')).substr(path.rfind('/') + 1, path.size());
 }
+
+
+FileReadResult readFile(std::string path) {
+	FileReadResult result{};
+
+	result.path = path;
+
+	std::ifstream in(path.c_str(), std::ios::binary);
+	if (in) {
+		std::string contents;
+		in.seekg(0, std::ios::end);
+		contents.resize(in.tellg());
+		in.seekg(0, std::ios::beg);
+		in.read(&contents[0], contents.size());
+		in.close();
+		
+		result.contents = contents;
+	}
+	else {
+		result.success = false;
+	}
+
+	return result;
+}

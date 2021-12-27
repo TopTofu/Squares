@@ -17,8 +17,12 @@ struct Cell {
 	Cell* below = 0;
 
 	bool occupied = false;
+};
 
-	Building occupant;
+
+struct CityInfo {
+	std::map<Building, std::vector<Cell*>> placedBuildings;
+	// @todo future container for stats like population, income, happiness...
 };
 
 
@@ -37,18 +41,22 @@ struct WorldInfo {
 };
 
 extern WorldInfo* World;
+extern CityInfo* City;
 
 
 void initWorld(glm::vec3 dimensions, float cellSize, GLuint shader);
 
 void renderWorld(Camera& camera);
 
-Cell* cellAtWorldCoords(glm::vec3 coords);
+Cell* cellAtWorldCoords(glm::vec3 coords); 
+Cell* cellAtGridCoords(glm::vec3 coords);
+
+glm::vec3 worldToGridCoords(glm::vec3 worldCoords);
 
 void placeBuildingAtWorldCoords(Building& building, glm::vec3 worldCoords, bool force = false);
 void placeBuildingAtGridCoords(Building& building, glm::vec3 gridCoords, bool force = false);
 
-void removeBuildingAtWorldCoords(glm::vec3 gridCoords);
+void removeBuildingAtGridCoords(glm::vec3 gridCoords);
 void removeBuildingAtWorldCoords(glm::vec3 worldCoords);
 
 int gridIndex(glm::vec3 gridCoords);

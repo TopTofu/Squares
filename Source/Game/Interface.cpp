@@ -6,13 +6,17 @@ InterfaceInfo Interface;
 
 void pickCell(glm::vec3 worldCoords) {
 	Cell* c = cellAtWorldCoords(worldCoords);
-
-	while (c->occupied && c->above && Interface.cellPicker.mode != PickerMode::ROAD) {
-		c = c->above;
+	glm::vec3 offset = {};
+	if (Interface.cellPicker.mode == PickerMode::ROAD) {
+		offset = glm::vec3(World->cellSize * 0.5f, 0.0f, World->cellSize * 0.5f);
 	}
-
+	else {
+		while (c->occupied && c->above) {
+			c = c->above;
+		}
+	}
 	Interface.cellPicker.baseMesh.translation = c->worldPosition;
-	Interface.cellPicker.stuckObject.translation = c->worldPosition + glm::vec3(World->cellSize * 0.5f, 0.0f, World->cellSize * 0.5f);
+	Interface.cellPicker.stuckBuilding.model.translation = c->worldPosition + offset;
 }
 
 void initInterface(GLFWwindow* window, GLuint shader) {
@@ -40,20 +44,18 @@ void initInterface(GLFWwindow* window, GLuint shader) {
 
 void sampleCallback(InterfaceElement* element) {
 	if (element->id == "1") {
-		Model m = getModelFromLoader("house02");
-		stickModelToPicker(m, PickerMode::BUILDING);
+		Building b = getBuildingFromCatalog("Apartment_01");
+		stickBuildingToPicker(b, PickerMode::BUILDING);
 	}
 	if (element->id == "2") {
-		Model m = getModelFromLoader("house03");
-		stickModelToPicker(m, PickerMode::BUILDING);
+		Building b = getBuildingFromCatalog("Apartment_02");
+		stickBuildingToPicker(b, PickerMode::BUILDING);
 	}
 	if (element->id == "3") {
-		Model m = getModelFromLoader("house04");
-		stickModelToPicker(m, PickerMode::BUILDING);
-	}
-	if (element->id == "4") {
-		Model m = getRoadTexturedQuad("road_o");
-		stickModelToPicker(m, PickerMode::ROAD);
+		Building b{};
+		b.type = BuildingType::ROAD;
+		b.model = getRoadTexturedQuad("road_o");
+		stickBuildingToPicker(b, PickerMode::ROAD);
 	}
 }
 
@@ -110,26 +112,27 @@ void initElements() {
 
 void interfaceKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-		Model m = getModelFromLoader("house02");
-		stickModelToPicker(m, PickerMode::BUILDING);
+		Building b = getBuildingFromCatalog("Apartment_01");
+		stickBuildingToPicker(b, PickerMode::BUILDING);
 	}
 	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
-		Model m = getModelFromLoader("house03");
-		stickModelToPicker(m, PickerMode::BUILDING);
+		Building b = getBuildingFromCatalog("Apartment_02");
+		stickBuildingToPicker(b, PickerMode::BUILDING);
 	}
 	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-		Model m = getModelFromLoader("house04");
-		stickModelToPicker(m, PickerMode::BUILDING);
-	}
-	if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
-		Model m = getRoadTexturedQuad("road_o");
-		stickModelToPicker(m, PickerMode::ROAD);
+		Building b{};
+		b.type = BuildingType::ROAD;
+		b.model = getRoadTexturedQuad("road_o");
+		stickBuildingToPicker(b, PickerMode::ROAD);
 	}
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		unstuckModelFromPicker();
 	}
 	if (key == GLFW_KEY_R && action == GLFW_PRESS) {
 		rotatePicker(90.0f);
+	}
+	if (key == GLFW_KEY_F1) {
+		printNetworkSimple();
 	}
 }
 
@@ -145,12 +148,10 @@ void interfaceMouseCallback(GLFWwindow* window, int button, int action, int mods
 			{
 				return;
 			}
-			if (Interface.cellPicker.mode == PickerMode::BUILDING) {
-				Building b;
-				b.model = Interface.cellPicker.stuckObject;
-				placeBuildingAtWorldCoords(b, Interface.cellPicker.baseMesh.translation);
-			}
-			else if (Interface.cellPicker.mode == PickerMode::ROAD) {
+			Building b;
+			b = Interface.cellPicker.stuckBuilding;
+			placeBuildingAtWorldCoords(b, Interface.cellPicker.baseMesh.translation);
+			if (Interface.cellPicker.mode == PickerMode::ROAD) {
 				addRoad(cell->gridPosition);
 			}
 		}
@@ -211,33 +212,37 @@ InterfaceElement* getInterfaceElementAtScreenSpace(double x, double y, bool* fou
 void renderInterface(Camera& camera) {
 	renderMesh(Interface.cellPicker.baseMesh, camera);
 	if (Interface.cellPicker.mode != PickerMode::EMPTY) // @Temporary may need to add more mode specific rendering
-		renderModel(Interface.cellPicker.stuckObject, camera);
+		renderModel(Interface.cellPicker.stuckBuilding.model, camera);
 
 	for (InterfaceElement& element : Interface.elements) {
 		renderInterfaceElement(element.mesh, camera);
 	}
 }
 
-void stickModelToPicker(Model& model, PickerMode mode) {
-	Interface.cellPicker.stuckObject = model;
+void stickBuildingToPicker(Building& building, PickerMode mode) {
+	Interface.cellPicker.stuckBuilding = building;
 	Interface.cellPicker.mode = mode;
-	Interface.cellPicker.stuckObject.translation = Interface.cellPicker.baseMesh.translation + glm::vec3(World->cellSize * 0.5f, 0.0f, World->cellSize * 0.5f);
+	glm::vec3 offset{};
+	if (mode == PickerMode::ROAD) {
+		glm::vec3(World->cellSize * 0.5f, 0.0f, World->cellSize * 0.5f);
+	}
+	translateModelTo(Interface.cellPicker.stuckBuilding.model, Interface.cellPicker.baseMesh.translation + offset);
 }
 
 void unstuckModelFromPicker() {
-	Interface.cellPicker.stuckObject = {};
+	Interface.cellPicker.stuckBuilding = {};
 	Interface.cellPicker.mode = PickerMode::EMPTY;
 }
 
 void rotatePicker(float degrees) {
-	Interface.cellPicker.stuckObject.rotation = glm::rotate(Interface.cellPicker.stuckObject.rotation, glm::radians(degrees), { 0, 1, 0 });
+	rotateModelBy(Interface.cellPicker.stuckBuilding.model, { 0,1,0 }, degrees);
 }
 
 void renderInterfaceElement(Mesh& mesh, Camera& camera) {
 	glDisable(GL_DEPTH_TEST);
 
 	glUseProgram(mesh.shader);
-	
+
 	if (mesh.texture != 0) {
 		glUniform1i(glGetUniformLocation(mesh.shader, "Textured"), 1);
 		glBindTexture(GL_TEXTURE_2D, mesh.texture->id);

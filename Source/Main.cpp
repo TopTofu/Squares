@@ -32,12 +32,13 @@ int main() {
 	cameraRotateY(camera, 135);
 	cameraRotateX(camera, 40);
 
-	initWorld({ 20, 20, 5 }, 1.0f, getShader("default").handle);
+	initWorld({ 50, 50, 5 }, 0.5f, getShader("default").handle);
 	initInterface(window, getShader("default").handle);
 
 	initRoadNetwork();
 
-	initModelLoader(getShader("material").handle, glm::vec3(World->cellSize / 2.0f));
+	initModelLoader(getShader("material").handle, glm::vec3(World->cellSize));
+	initBuildingCatalog("E:/Squares/Resources/Configs/buildings.config");
 
 	Light light = initLight({ 10.0f, 20.0f, 10.0f });
 

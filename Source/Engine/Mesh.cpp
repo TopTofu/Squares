@@ -192,6 +192,10 @@ void rotateModelBy(Model& model, glm::vec3 axis, float degrees) {
 	model.rotation = glm::rotate(model.rotation, glm::radians(degrees), axis);
 }
 
+void rotateModelTo(Model& model, glm::quat rotation) {
+	model.rotation = rotation;
+}
+
 Model loadOBJ(std::string filePath, bool buffer) {
 	Model model;
 	model.filePath = filePath;

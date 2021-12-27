@@ -8,7 +8,7 @@ std::string modelPaths[] = {
 	"./Resources/Models/house04.obj",
 	"./Resources/Models/street_straight.obj",
 	"./Resources/Models/street_curve.obj",
-	//"./Resources/Models/donut.obj",
+	"./Resources/Models/apartment_02.obj",
 };
 
 

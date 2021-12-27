@@ -1,7 +1,7 @@
 #include <Engine/Light.h>
 
 Light initLight(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular) {
-	Light light;
+	Light light{};
 	light.position = position;
 	light.ambient = ambient;
 	light.diffuse = diffuse;

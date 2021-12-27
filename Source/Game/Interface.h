@@ -19,7 +19,7 @@ enum class PickerMode {
 };
 
 struct CellPicker {
-	Model stuckObject;
+	Building stuckBuilding;
 	Mesh baseMesh;
 
 	PickerMode mode = PickerMode::EMPTY;
@@ -69,7 +69,7 @@ void updateInterface(GLFWwindow* window, Camera& camera);
 void updateCellPicker(GLFWwindow* window, Camera& camera);
 void pickCell(glm::vec3 worldCoords);
 
-void stickModelToPicker(Model& model, PickerMode mode);
+void stickBuildingToPicker(Building& building, PickerMode mode);
 void unstuckModelFromPicker();
 
 void rotatePicker(float degrees);
